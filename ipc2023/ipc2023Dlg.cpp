@@ -329,6 +329,7 @@ BOOL Cipc2023Dlg::Receive(unsigned char* ppayload)
 		}
 		return FALSE;
 	}
+	m_ListControl.InsertItem(i, "");
 	m_ListControl.SetItemText(i, 1, DstIpAddrStr);
 	m_ListControl.SetItemText(i, 2, DstMacAddrStr);
 	m_ListControl.SetItemText(i, 3, _T("complete"));
