@@ -102,6 +102,8 @@ public:
 	CListCtrl m_ListControl;
 	CIPAddressCtrl m_SrcIp;
 	CIPAddressCtrl m_DstIp;
+	int timerIndex[10];
+	int timerMaxIndex = 0;
 	afx_msg void OnCbnSelchangeCombo1();
 	//////////////////////////////////////
 	///////////오늘 추가된 부분//////////

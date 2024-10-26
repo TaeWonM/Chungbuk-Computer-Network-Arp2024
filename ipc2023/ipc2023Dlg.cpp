@@ -190,6 +190,7 @@ BOOL Cipc2023Dlg::OnInitDialog()
 	m_EthernetLayer->SetBroadcasting_address();
 	SetComboboxlist();
 	InitListControlSet();
+	memset(timerIndex, -1, 4 * 10);
 	//원래는 여기서 송수신 주소 처리했는데 NI레이어로 함수 이동하고 여기서는 전달만 해줌
 	/////////////////////////////////////////////////////////////////////////
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
@@ -291,6 +292,7 @@ void Cipc2023Dlg::SendData()
 		for (i = 0; i < m_ListControl.GetItemCount(); i++) {
 			if (m_ListControl.GetItemText(i, 1) == unDstIpAddrStr) {
 				if (m_ListControl.GetItemText(i, 3) == "complete") {
+					SetTimer(timerIndex[i], 3000, NULL);
 					AfxMessageBox(_T("Already Set.."));
 					return;
 				}
@@ -303,6 +305,9 @@ void Cipc2023Dlg::SendData()
 		m_ListControl.InsertItem(i, "");
 		m_ListControl.SetItemText(i, 1, unDstIpAddrStr);
 		m_ListControl.SetItemText(i, 3, _T("Incomplete"));
+		SetTimer(i, 3000, NULL);
+		timerIndex[i] = i;
+		timerMaxIndex++;
 		m_Arp->Send(unDst_Ip_Address, 4);
 	}
 }
@@ -326,6 +331,7 @@ BOOL Cipc2023Dlg::Receive(unsigned char* ppayload)
 		if (m_ListControl.GetItemText(i, 1) == DstIpAddrStr) {
 			m_ListControl.SetItemText(i, 2, DstMacAddrStr);
 			m_ListControl.SetItemText(i, 3, _T("complete"));
+			SetTimer(i, 30000, NULL);
 		}
 		return FALSE;
 	}
@@ -333,6 +339,16 @@ BOOL Cipc2023Dlg::Receive(unsigned char* ppayload)
 	m_ListControl.SetItemText(i, 1, DstIpAddrStr);
 	m_ListControl.SetItemText(i, 2, DstMacAddrStr);
 	m_ListControl.SetItemText(i, 3, _T("complete"));
+	for (int k = 0; k < timerMaxIndex; k++) {
+		if (timerIndex[k] <= -1) {
+			SetTimer(k, 30000, NULL);
+			timerIndex[k] = i;
+			return FALSE;
+		}
+	}
+	SetTimer(i, 30000, NULL);
+	timerIndex[i] = i;
+	timerMaxIndex++;
 	//////////////////////////////////////////////////////////////////////////////////
 	return FALSE;
 }
@@ -434,7 +450,17 @@ void Cipc2023Dlg::EndofProcess()
 
 void Cipc2023Dlg::OnTimer(UINT nIDEvent)
 {
-	KillTimer(nIDEvent);
+	if (timerIndex[nIDEvent] <= -1) {
+		KillTimer(nIDEvent);
+	}
+	else {
+		KillTimer(nIDEvent);
+		m_ListControl.DeleteItem(timerIndex[nIDEvent]);
+		timerIndex[nIDEvent] = -1;
+		for (int k = nIDEvent + 1; k < timerMaxIndex; k++) {
+			timerIndex[k]--;
+		}
+	}
 	CDialog::OnTimer(nIDEvent);
 }
 // 타이머가 시간이 끝나면 ListDlg에 타임아웃 메시지를 띄웁니다.
@@ -600,21 +626,30 @@ void Cipc2023Dlg::InitListControlSet()
 
 void Cipc2023Dlg::OnBnClickedItemDeleteBtn()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int nmark = m_ListControl.GetSelectionMark();
+	if (nmark != -1) {
+		m_ListControl.DeleteItem(nmark);
+		for (int i = nmark+1; i < timerMaxIndex; i++) {
+			timerIndex[i]--;
+		}
+	}
 }
 
 
 void Cipc2023Dlg::OnBnClickedAllDeleteBtn()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_ListControl.DeleteAllItems();
+	for (int i = 0; i < timerMaxIndex; i++) {
+		timerIndex[i] = -1;
+	}
 }
 
 
 void Cipc2023Dlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	*pResult = 0;
+	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	int row = pNMIA->iItem;
+	int col = pNMIA->iSubItem;
 }
 
 
