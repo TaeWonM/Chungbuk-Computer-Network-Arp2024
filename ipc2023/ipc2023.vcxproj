@@ -187,13 +187,13 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ArpLayer.h" />
     <ClInclude Include="BaseLayer.h" />
-    <ClInclude Include="ChatAppLayer.h" />
     <ClInclude Include="CNILayer.h" />
-    <ClInclude Include="CFileLayer.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ipc2023.h" />
     <ClInclude Include="ipc2023Dlg.h" />
+    <ClInclude Include="ipLayer.h" />
     <ClInclude Include="LayerManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
@@ -202,13 +202,13 @@
     <ClInclude Include="EthernetLayer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArpLayer.cpp" />
     <ClCompile Include="BaseLayer.cpp" />
-    <ClCompile Include="CFileLayer.cpp" />
-    <ClCompile Include="ChatAppLayer.cpp" />
     <ClCompile Include="EthernetLayer.cpp" />
     <ClCompile Include="CNIlayer.cpp" />
     <ClCompile Include="ipc2023.cpp" />
     <ClCompile Include="ipc2023Dlg.cpp" />
+    <ClCompile Include="ipLayer.cpp" />
     <ClCompile Include="LayerManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

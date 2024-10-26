@@ -1,10 +1,10 @@
 #pragma once
-// ChatAppLayer.h: interface for the CChatAppLayer class.
+// ArpLayer.h: interface for the CChatAppLayer class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_CHATAPPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_)
-#define AFX_CHATAPPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_
+#if !defined(AFX_ARPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_)
+#define AFX_ARPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -12,7 +12,7 @@
 
 #include "BaseLayer.h"
 #include "pch.h"
-class CChatAppLayer
+class ArpLayer
 	: public CBaseLayer
 {
 private:
@@ -26,8 +26,8 @@ public:
 	BOOL			Send(unsigned char* ppayload, int nlength);
 	BOOL			Get_Is_Ack();
 	void			Set_Is_Ack(BOOL value);
-	CChatAppLayer(char* pName);
-	virtual ~CChatAppLayer();
+	ArpLayer(char* pName);
+	virtual ~ArpLayer();
 
 	typedef struct _CHAT_APP_HEADER {
 		unsigned short	app_length; // total length of the data

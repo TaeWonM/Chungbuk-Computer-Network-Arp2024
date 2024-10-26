@@ -39,19 +39,19 @@
     <ClInclude Include="LayerManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ChatAppLayer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="EthernetLayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CNILayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CFileLayer.h">
+    <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="ArpLayer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ipLayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,16 +71,16 @@
     <ClCompile Include="LayerManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ChatAppLayer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="EthernetLayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CNIlayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CFileLayer.cpp">
+    <ClCompile Include="ipLayer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ArpLayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

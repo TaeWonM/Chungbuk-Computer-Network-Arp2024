@@ -5,8 +5,8 @@
 #pragma once
 
 #include "LayerManager.h"	// Added by ClassView
-#include "ChatAppLayer.h"	// Added by ClassView
-#include "CFileLayer.h"	// Added by ClassView
+#include "ArpLayer.h"	// Added by ClassView
+#include "ipLayer.h"	// Added by ClassView
 #include "EthernetLayer.h"	// Added by ClassView
 #include "CNILayer.h"	// Added by ClassView
 #include <pcap.h>
@@ -83,10 +83,10 @@ private:
 	UINT_PTR		TimerHandler;
 
 	// Object App
-	CChatAppLayer* m_ChatApp;
+	ipLayer* m_Ip;
 	CEthernetLayer* m_EthernetLayer;
 	CNILayer* m_NILayer;
-	CFileLayer* m_FileApp;	// 추가함
+	ArpLayer* m_Arp;	// 추가함
 	// Implementation
 	UINT			m_wParam;
 	DWORD			m_lParam;
@@ -125,4 +125,7 @@ public:
 	BOOL upperLayerKillTimer(int num);
 	BOOL upperLayerSetTimer(int num);
 	BOOL SetProgressbar(int max, int cur);
+	afx_msg void OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedItemDeleteBtn();
 };

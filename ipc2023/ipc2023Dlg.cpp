@@ -86,10 +86,10 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	//Protocol Layer Setting
-	m_LayerMgr.AddLayer(new CChatAppLayer("ChatApp")); // ChatAppLayer 추가
+	m_LayerMgr.AddLayer(new ipLayer("ChatApp")); // ChatAppLayer 추가
 	m_LayerMgr.AddLayer(new CEthernetLayer("Ethernet")); // EthernetLayer 추가
 	m_LayerMgr.AddLayer(new CNILayer("NI"));
-	m_LayerMgr.AddLayer(new CFileLayer("File")); // 10.11 FileAppLayer 추가
+	m_LayerMgr.AddLayer(new ArpLayer("File")); // 10.11 FileAppLayer 추가
 	// file 레이어를 NILAyer로 변경
 	// 여기서 이렇게 설정해줘서 다른 레이어 시작 시 해당하는 클래스 생성하면
 	// 자동으로 pName에 이름이 넘어가는 것
@@ -100,7 +100,7 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	m_LayerMgr.ConnectLayers("NI ( *Ethernet ( *ChatApp ( *ChatDlg ) *File ( *ChatDlg ) ) ) )");
 	// 기존에 file 레이어 부분 대신 NI 레이어를 추가함
 	////////////////////////추가됨///////////////////////////////
-	m_ChatApp = (CChatAppLayer*)m_LayerMgr.GetLayer("ChatApp");
+	m_Ip = (ipLayer*)m_LayerMgr.GetLayer("ChatApp");
 	m_EthernetLayer = (CEthernetLayer*)m_LayerMgr.GetLayer("Ethernet");
 	// 이더넷 레이어를 직접 참조하도록 코드 추가함
 	m_NILayer = (CNILayer*)m_LayerMgr.GetLayer("NI");
@@ -108,7 +108,7 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	//Protocol Layer Setting
 	// 위에서 추가한 레이어를 특정 변수에 저장하여 사용
 	// 10.11 추가함
-	m_FileApp = (CFileLayer*)m_LayerMgr.GetLayer("File");
+	m_Arp = (ArpLayer*)m_LayerMgr.GetLayer("File");
 }
 
 void Cipc2023Dlg::DoDataExchange(CDataExchange* pDX)
@@ -160,6 +160,9 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_FSEND, &Cipc2023Dlg::OnBnClickedButtonFsend)
 	ON_EN_CHANGE(IDC_EDIT_FPATH, &Cipc2023Dlg::OnEnChangeEditFpath)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_PROGRESS_FTRANSFER, &Cipc2023Dlg::OnNMCustomdrawProgressFtransfer)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, &Cipc2023Dlg::OnLvnItemchangedList2)
+	ON_BN_CLICKED(IDC_BUTTON2, &Cipc2023Dlg::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_ITEM_DELETE_BTN, &Cipc2023Dlg::OnBnClickedItemDeleteBtn)
 END_MESSAGE_MAP()
 
 
@@ -341,7 +344,7 @@ void Cipc2023Dlg::SendData()
 
 
 	// 보낼 data와 메시지 길이를 Send함수로 넘겨준다.
-	m_ChatApp->Send(ppayload, nlength);
+	m_Ip->Send(ppayload, nlength);
 	// ChatAppALayer의 Send함수 호출하여 메세지 전송 기능
 	///////////////////////////////////////////////////////////////////////
 }
@@ -354,14 +357,14 @@ BOOL Cipc2023Dlg::Receive(unsigned char* ppayload)
 {
 	/////////////////////////////////수정됨//////////////////////////////////////////
 	CString Buff;
-	if (m_FileApp->Get_Is_Ack()) {
-		m_FileApp->Set_Is_Ack(FALSE);
+	if (m_Arp->Get_Is_Ack()) {
+		m_Arp->Set_Is_Ack(FALSE);
 		return FALSE;
 	}
-	if (m_ChatApp->Get_Is_Ack())
+	if (m_Ip->Get_Is_Ack())
 		// m_ChatApp->Is_Ack가 true 라면
 	{
-		m_ChatApp->Set_Is_Ack(FALSE);
+		m_Ip->Set_Is_Ack(FALSE);
 		return FALSE;
 	}
 	if (m_EthernetLayer->is_Broadcast)
@@ -512,7 +515,7 @@ void Cipc2023Dlg::OnTimer(UINT nIDEvent)
 	}
 	else {
 		KillTimer(nIDEvent);
-		m_FileApp->reSend();
+		m_Arp->reSend();
 	}
 		CDialog::OnTimer(nIDEvent);
 }
@@ -706,10 +709,10 @@ void Cipc2023Dlg::OnBnClickedButtonFsend()
 	// 파일 데이터를 메모리에 읽어들임
 	file.Read(&ppayload[fileNameLength], fileSize);
 	file.Close();
-	m_FileApp->Set_File_length(fileNameLength);
+	m_Arp->Set_File_length(fileNameLength);
 	m_Progress_Bar.SetPos(0);
 	// 하위 레이어의 Send 함수 호출
-	if (m_FileApp->Send(ppayload, fileSize + fileNameLength))
+	if (m_Arp->Send(ppayload, fileSize + fileNameLength))
 	{
 		GetDlgItem(IDC_BUTTON_FSEND)->EnableWindow(TRUE);
 	}
@@ -754,4 +757,23 @@ BOOL Cipc2023Dlg::SetProgressbar(int max, int cur) {
 	}
 	m_Progress_Bar.SetPos(cur);
 	return TRUE;
+}
+
+void Cipc2023Dlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+}
+
+
+void Cipc2023Dlg::OnBnClickedButton2()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void Cipc2023Dlg::OnBnClickedItemDeleteBtn()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
