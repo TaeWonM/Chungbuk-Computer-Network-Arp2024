@@ -29,18 +29,23 @@ public:
 	ArpLayer(char* pName);
 	virtual ~ArpLayer();
 
-	typedef struct _CHAT_APP_HEADER {
-		unsigned short	app_length; // total length of the data
-		unsigned char	app_type; // type of application data
-		unsigned char   app_unused;
-		unsigned char	app_data[APP_DATA_SIZE]; // application data
+	typedef struct _ARP_HEADER {
+		unsigned short	hard_type; // total length of the data
+		unsigned short	portocal_type; // type of application data
+		unsigned char   hard_size;
+		unsigned char	portocal_size; // application data
+		unsigned short	op_Code;
+		unsigned char	sender_ethernet_address[ETHER_ADDRESS_SIZE];
+		unsigned char	sender_IP_address[IP_ADDRESS_SIZE];
+		unsigned char	target_ethernet_address[ETHER_ADDRESS_SIZE];
+		unsigned char	target_IP_address[IP_ADDRESS_SIZE];
 
-	} CHAT_APP_HEADER, * PCHAT_APP_HEADER;
+	} ARP_HEADER, * P_ARP_HEADER;
 	CString Msg;
 
 protected:
-	CHAT_APP_HEADER		m_sHeader;
-	CHAT_APP_HEADER		m_ackHeader;
+	ARP_HEADER		m_sHeader;
+	ARP_HEADER		m_ackHeader;
 
 	enum {
 		DATA_TYPE_CONT = 0x01,

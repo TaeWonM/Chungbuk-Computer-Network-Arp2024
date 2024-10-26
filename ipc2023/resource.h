@@ -35,7 +35,6 @@
 #define IDC_DST_IP                      1014
 #define IDC_LIST2                       1015
 #define IDC_ITEM_DELETE_BTN             1017
-#define IDC_ITEM_DELETE_BTN2            1018
 #define IDC_ALL_DELETE_BTN              1018
 
 // Next default values for new objects

@@ -39,7 +39,11 @@
 #define FILE_HEADER_SIZE		12
 #define FILE_DATA_SIZE			( ETHER_MAX_DATA_SIZE - ( FILE_HEADER_SIZE ))
 
-#define BOARDCAST_ADRR          0xffffffffffff
+#define	ETHER_ADDRESS_SIZE			6
+#define IP_ADDRESS_SIZE				4
+#define	ARP_HEADER_SIZE				2 + 2 + 1 + 1 + 2 + ETHER_ADDRESS_SIZE * 2 + IP_ADDRESS_SIZE * 2
+
+#define BOARDCAST_ETH_ADRR          0xffffffffffff
 
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 

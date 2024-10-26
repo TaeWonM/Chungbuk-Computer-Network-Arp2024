@@ -146,23 +146,12 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_REGISTERED_MESSAGE(nRegAckMsg, OnRegAckMsg)
 	
 	//////////////새로 추가된 부분////////////////////////////////////////
-	ON_BN_CLICKED(IDC_CHECK_TOALL, &Cipc2023Dlg::OnBnClickedCheckToall)
-	// IDC_CHECK_TOALL 체크박스 클릭 시 처리기 등록
-	ON_EN_CHANGE(IDC_EDIT_DST, &Cipc2023Dlg::OnEnChangeEditDst)
-	// 목적지 주소 변경 시 처리기 등록
-	ON_EN_CHANGE(IDC_EDIT_SRC, &Cipc2023Dlg::OnEnChangeEditDst)
 	// 소스 주소 변경 시 처리기 등록
 	ON_CBN_SELCHANGE(IDC_COMBO1, &Cipc2023Dlg::OnCbnSelchangeCombo1)
-	// 콤보박스(송신 측 장치 선택) 선택 변경 시 처리기 등록
-	ON_EN_CHANGE(IDC_EDIT_DST2, &Cipc2023Dlg::OnEnChangeEditDst2)
-	////////////////////////////////////////////////////////////////
-	ON_BN_CLICKED(IDC_BUTTON_FOPEN, &Cipc2023Dlg::OnBnClickedButtonFopen)
-	ON_BN_CLICKED(IDC_BUTTON_FSEND, &Cipc2023Dlg::OnBnClickedButtonFsend)
-	ON_EN_CHANGE(IDC_EDIT_FPATH, &Cipc2023Dlg::OnEnChangeEditFpath)
-	ON_NOTIFY(NM_CUSTOMDRAW, IDC_PROGRESS_FTRANSFER, &Cipc2023Dlg::OnNMCustomdrawProgressFtransfer)
+	////////////////////////////////////////////////////////////////=
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, &Cipc2023Dlg::OnLvnItemchangedList2)
-	ON_BN_CLICKED(IDC_BUTTON2, &Cipc2023Dlg::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_ITEM_DELETE_BTN, &Cipc2023Dlg::OnBnClickedItemDeleteBtn)
+	ON_BN_CLICKED(IDC_ALL_DELETE_BTN, &Cipc2023Dlg::OnBnClickedAllDeleteBtn)
 END_MESSAGE_MAP()
 
 
@@ -201,7 +190,6 @@ BOOL Cipc2023Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	SetRegstryMessage(); // 레지스트리 메세지 설정하는 사용자 정의 함수 호출
 	SetDlgState(IPC_INITIALIZING); 
 	// 대화 상자의 초기상태를 TNITIALIZING으로 초기화
 
@@ -310,15 +298,6 @@ void Cipc2023Dlg::OnBnClickedButtonSend()
 // 메시지가 존재 하였을 경우 타이머를 설정하고, 기존에 있던 메시지를 초기화합니다.
 // 또한, Send 신호를 브로드캐스트로 알립니다.
 
-void Cipc2023Dlg::SetRegstryMessage()
-{
-		// Ack 레지스트리의 메시지를 설정
-	nRegAckMsg = RegisterWindowMessage(_T("Ack IPC Message"));
-	///////////////////////////////////////////////////////////////////////
-}
-// 재시도 레지스트리의 메시지를 설정하는 부분입니다.
-// nRegSendMsg 변수는 "Send IPC Message"를 윈도우 레지스터 메시지로 가지고 있으므로써 Send 신호를 보내기 위한 준비입니다.
-// nRegAckMsg 변수는 "Ack IPC Message"를 윈도우 레지스터 메시지로 가지고 있으므로써 Ack 신호를 보내기 위한 준비입니다.
 
 void Cipc2023Dlg::SendData()
 {
@@ -569,29 +548,9 @@ void Cipc2023Dlg::OnBnClickedButtonAddr()
 // 그래서 OnBnClickedButtonAddr이 오류 없이 눌리면 SetDlgState를 이용해 IPC_ADDR_SET와 IPC_READYTOSEND로 바꾸고
 // m_bSendReady을 True로 바꿉니다. 또한, 다시한면 눌리면 IPC_ADDR_RESET과 IPC_INITIALIZING를 해 다시 보낼 수 있도록 재시작을 합니다.
 
-void Cipc2023Dlg::OnBnClickedCheckToall()
-{
-	CButton* pChkButton = (CButton*)GetDlgItem(IDC_CHECK_TOALL); // 체크 박스 버튼 포인터 가져옴
-
-	if (pChkButton->GetCheck()) {
-		SetDlgState(IPC_BROADCASTMODE);
-	}
-	else {
-		SetDlgState(IPC_UNICASTMODE);
-	}
-}
 // 체크 박스 상태에 따른 전송 모드 처리. 체크 되어있으면 브로드캐스트, 안되어있으면 유니캐스트로 처리
 // BROADCAST 버튼이 눌렸을 때 SetDlgState을 이용해 IPC_BROADCASTMODE를 설정하거나 IPC_UNICASTMODE을 이용해 IPC_BROADCASTMODE를 해제합니다.
 
-void Cipc2023Dlg::OnEnChangeEditDst()
-{
-	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
-	// __super::OnInitDialog() 함수를 재지정 
-	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
-	// 이 알림 메시지를 보내지 않습니다.
-
-	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
 
 ///아래는 전부 추가된 부분//////////
 void Cipc2023Dlg::OnCbnSelchangeCombo1()
@@ -634,15 +593,6 @@ void Cipc2023Dlg::OnCbnSelchangeCombo1()
 }
 
 
-void Cipc2023Dlg::OnEnChangeEditDst2()
-{
-	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
-	// __super::OnInitDialog() 함수를 재지정 
-	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
-	// 이 알림 메시지를 보내지 않습니다.
-
-	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
 
 unsigned char* Cipc2023Dlg::MacAddr2HexInt(CString Mac_address)
 {
@@ -669,96 +619,6 @@ unsigned char* Cipc2023Dlg::MacAddr2HexInt(CString Mac_address)
 }
 
 
-/// //////////////////////////////////////////이 아래가 OCT.11 추가됨
-void Cipc2023Dlg::OnBnClickedButtonFopen()
-{
-	CFileDialog dlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, _T("All Files (*.*)|*.*||"));
-
-	if (dlg.DoModal() == IDOK)
-	{
-		// 선택한 파일의 경로를 가져와 텍스트 박스에 설정
-		CString filePath = dlg.GetPathName();
-		m_strFileName = dlg.GetFileName();
-		SetDlgItemText(IDC_EDIT_FPATH, filePath);
-
-		// 선택한 파일 경로를 m_strFilePath 멤버 변수에 저장
-		m_strFilePath = filePath;
-
-		GetDlgItem(IDC_BUTTON_FSEND)->EnableWindow(TRUE); // 기본 설정 상태가 false로 설정한 FSend(파일 전송버튼)
-	}
-}
-
-
-void Cipc2023Dlg::OnBnClickedButtonFsend()
-{
-	GetDlgItem(IDC_BUTTON_FSEND)->EnableWindow(FALSE);
-	// 파일을 열어서 파일 데이터를 메모리로 가져옴
-	CFile file;
-	if (!file.Open(m_strFilePath, CFile::modeRead))
-	{
-		AfxMessageBox(_T("File cannot be opened."));
-		return;
-	}
-
-	int fileNameLength = m_strFileName.GetLength();  // 파일 이름의 길이
-	ULONGLONG fileSize = file.GetLength();
-
-	unsigned char* ppayload = new unsigned char[fileNameLength + 1 + (size_t)fileSize];
-	memset(ppayload, '\0', fileNameLength + 1 + (size_t)fileSize);
-	memcpy(ppayload, (unsigned char*)(LPCTSTR)m_strFileName, fileNameLength);
-	// 파일 데이터를 메모리에 읽어들임
-	file.Read(&ppayload[fileNameLength], fileSize);
-	file.Close();
-	m_Arp->Set_File_length(fileNameLength);
-	m_Progress_Bar.SetPos(0);
-	// 하위 레이어의 Send 함수 호출
-	if (m_Arp->Send(ppayload, fileSize + fileNameLength))
-	{
-		GetDlgItem(IDC_BUTTON_FSEND)->EnableWindow(TRUE);
-	}
-	else
-	{
-		AfxMessageBox(_T("File transfer failed."));
-		GetDlgItem(IDC_BUTTON_FSEND)->EnableWindow(TRUE);
-	}
-	// 메모리 해제
-	delete[] ppayload;
-}
-
-void Cipc2023Dlg::OnEnChangeEditFpath()
-{
-	// 사용자가 텍스트 박스의 경로를 수정할 때 경로를 변수에 업데이트
-	UpdateData(TRUE);
-	GetDlgItemText(IDC_EDIT_FPATH, m_strFilePath);
-	UpdateData(FALSE);
-}
-
-void Cipc2023Dlg::OnNMCustomdrawProgressFtransfer(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	*pResult = 0;
-}
-BOOL Cipc2023Dlg::upperLayerKillTimer(int num) {
-	KillTimer(num);
-	return TRUE;
-}
-
-BOOL Cipc2023Dlg::upperLayerSetTimer(int num) {
-	SetTimer(num, 3000, NULL);
-	return TRUE;
-};
-
-BOOL Cipc2023Dlg::SetProgressbar(int max, int cur) {
-	int curMin, curMax;
-	m_Progress_Bar.GetRange(curMin, curMax);
-	if (curMax != max) {
-		m_Progress_Bar.SetRange(0, max);
-	}
-	m_Progress_Bar.SetPos(cur);
-	return TRUE;
-}
-
 void Cipc2023Dlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
@@ -767,13 +627,13 @@ void Cipc2023Dlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 
-void Cipc2023Dlg::OnBnClickedButton2()
+void Cipc2023Dlg::OnBnClickedItemDeleteBtn()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
 
 
-void Cipc2023Dlg::OnBnClickedItemDeleteBtn()
+void Cipc2023Dlg::OnBnClickedAllDeleteBtn()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
