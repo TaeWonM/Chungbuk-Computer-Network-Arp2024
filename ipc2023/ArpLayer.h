@@ -18,14 +18,12 @@ class ArpLayer
 private:
 	inline void		ResetHeader();
 	CObject* mp_Dlg;
-	BOOL			Is_Ack = FALSE;
 
 public:
-	BOOL			sendAck(unsigned char* ppayload);
+
 	BOOL			Receive(unsigned char* ppayload);
-	BOOL			Send(unsigned char* ppayload, int nlength);
-	BOOL			Get_Is_Ack();
-	void			Set_Is_Ack(BOOL value);
+	BOOL			Send(unsigned char* DstIpAddress, int nlength);
+	void			Set_Sender_Address(unsigned char* MACAddr, unsigned char* IpAddress);
 	ArpLayer(char* pName);
 	virtual ~ArpLayer();
 
@@ -45,7 +43,7 @@ public:
 
 protected:
 	ARP_HEADER		m_sHeader;
-	ARP_HEADER		m_ackHeader;
+	ARP_HEADER		m_replyHeader;
 
 	enum {
 		DATA_TYPE_CONT = 0x01,

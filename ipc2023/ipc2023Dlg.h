@@ -75,10 +75,8 @@ private:
 
 	void			SetDlgState(int state);
 	inline void		EndofProcess();
-	inline void		SetRegstryMessage();
-	LRESULT			OnRegSendMsg(WPARAM wParam, LPARAM lParam);
-	LRESULT			OnRegAckMsg(WPARAM wParam, LPARAM lParam);
 	unsigned char*  MacAddr2HexInt(CString Mac_address);
+	unsigned char*	IpAddr2HexInt(CString Ip_address);
 	BOOL			m_bSendReady;
 	UINT_PTR		TimerHandler;
 
@@ -100,33 +98,24 @@ public:
 	// 클래스로 바꿈
 	/////////////////////////////
 	CString m_stMessage;
-	CListBox m_ListChat;
 	CComboBox m_Combobox;
-	CProgressCtrl m_Progress_Bar;
-	afx_msg void OnBnClickedCheckToall();
-	/////////////////새로 만든 GUI에 대응되는 부분
-	afx_msg void OnEnChangeEditDst();
+	CListCtrl m_ListControl;
+	CIPAddressCtrl m_SrcIp;
+	CIPAddressCtrl m_DstIp;
 	afx_msg void OnCbnSelchangeCombo1();
-	afx_msg void OnEnChangeEditDst2();
 	//////////////////////////////////////
 	///////////오늘 추가된 부분//////////
 	void SetComboboxlist();
 	// 콤보박스의 값을 처리하는 함수가 이동되서 추가된 함수
 	////////////////////////////////////
 public:
-	CString m_strFilePath;
-	CString m_strFileName;
-	inline void		SendFData();	// File 전달용 함수
 
-	afx_msg void OnBnClickedButtonFopen();
-	afx_msg void OnBnClickedButtonFsend();
-	afx_msg void OnEnChangeEditFpath();
-	afx_msg void OnNMCustomdrawProgressFtransfer(NMHDR* pNMHDR, LRESULT* pResult);
-	BOOL upperLayerKillTimer(int num);
+	/*BOOL upperLayerKillTimer(int num);
 	BOOL upperLayerSetTimer(int num);
-	BOOL SetProgressbar(int max, int cur);
-	afx_msg void OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButton2();*/
+	void InitListControlSet();
 	afx_msg void OnBnClickedItemDeleteBtn();
 	afx_msg void OnBnClickedAllDeleteBtn();
+	afx_msg void OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult);
 };

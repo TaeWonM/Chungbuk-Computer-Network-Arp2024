@@ -1,4 +1,4 @@
-// FileLayer.cpp: implementation of the CFileLayer class.
+ï»¿// ChatAppLayer.cpp: implementation of the CChatAppLayer class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -16,118 +16,67 @@ static char THIS_FILE[] = __FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CNILayer::CNILayer(char* pName)
-	: CBaseLayer(pName)
+ArpLayer::ArpLayer(char* pName)
+	: CBaseLayer(pName),
+	mp_Dlg(NULL)
 {
+	ResetHeader();
 }
+// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CChatAppLayerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
 
-CNILayer::~CNILayer()
+ArpLayer::~ArpLayer()
 {
-	TRY
-	{
-		//////////////////////// fill the blank ///////////////////////////////
-				CFile::Remove(_T("IpcBuff.txt")); // ÆÄÀÏ Á¦°Å
-	///////////////////////////////////////////////////////////////////////
-	}
-		CATCH(CFileException, e)
-	{
-#ifdef _DEBUG
-		afxDump << "File cannot be removed\n";
-#endif
-	}
-	END_CATCH
+
 }
 
-BOOL CNILayer::Send(unsigned char* ppayload, int nlength)
+void ArpLayer::ResetHeader()
 {
-	char errbuf[1001];
-	if ((fp = pcap_open_live(m_AdapterList[curAdapterIndex]->name, 65536, 0, 1000, errbuf)) == NULL) {
-		AfxMessageBox(_T("Unable to open the adapter"));
-		return false;
-	}
-	if (!send_packet(fp, ppayload, nlength)) {
-		AfxMessageBox(_T("ERROR SENDING THE PACKET"));
-		return false;
-	}
-
-	return true;
+	m_sHeader.hard_type = htons(0x0001);
+	m_sHeader.portocal_type = htons(0x0800);
+	m_sHeader.hard_size = 6;
+	m_sHeader.portocal_size = 4;
+	m_sHeader.op_Code = htons(0x0001);
+	memset(m_sHeader.sender_ethernet_address, 0, ETHER_ADDRESS_SIZE);
+	memset(m_sHeader.sender_IP_address, 0, IP_ADDRESS_SIZE);
+	memset(m_sHeader.target_ethernet_address, 0, ETHER_ADDRESS_SIZE);
+	memset(m_sHeader.target_IP_address, 0, IP_ADDRESS_SIZE);
+	m_replyHeader.hard_type = htons(0x0001);
+	m_replyHeader.portocal_type = htons(0x0800);
+	m_replyHeader.hard_size = 6;
+	m_replyHeader.portocal_size = 4;
+	m_replyHeader.op_Code = htons(0x0002);
+	memset(m_replyHeader.sender_ethernet_address, 0, ETHER_ADDRESS_SIZE);
+	memset(m_replyHeader.sender_IP_address, 0, IP_ADDRESS_SIZE);
+	memset(m_replyHeader.target_ethernet_address, 0, ETHER_ADDRESS_SIZE);
+	memset(m_replyHeader.target_IP_address, 0, IP_ADDRESS_SIZE);
 }
-// °¡Àå ¾Æ·¡ °èÃþÀÎ File °èÃþÀÇ Send ÇÔ¼ö ÀÔ´Ï´Ù. IpcBuff.txt¶ó´Â ÆÄÀÏÀ» ¸¸µé¾î¼­ Àû½À´Ï´Ù
+//m_sHeaderï¿½ï¿½ ChatApp ï¿½ï¿½ï¿½ ï¿½Îºï¿½ ï¿½Îºï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½, Resetï¿½Ô¼ï¿½ï¿½Ô´Ï´ï¿½.
 
-BOOL CNILayer::Receive()
+BOOL ArpLayer::Send(unsigned char* DstIpAddress, int nlength)
 {
-	char errbuf[1001];
-	if ((fp = pcap_open_live(m_AdapterList[curAdapterIndex]->name, 65536, 0, 1000, errbuf)) == NULL) {
-		AfxMessageBox(_T(errbuf));
-		is_set = false;
-		return false;
+	memcpy(m_sHeader.target_IP_address, DstIpAddress, nlength);
+	memset(m_sHeader.target_ethernet_address, 255, ETHER_ADDRESS_SIZE);
+	return mp_UnderLayer->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE, 1);
+}
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Send ï¿½Ô¼ï¿½ï¿½Ô´Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, ï¿½Ì¸ï¿½ ppayloadï¿½ï¿½ ï¿½Ö´ï¿½ dataï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½, CEthernetLayer)ï¿½ï¿½ Sendï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+
+
+BOOL ArpLayer::Receive(unsigned char* ppayload)
+{
+	P_ARP_HEADER arp = (P_ARP_HEADER)ppayload;
+	if (memcmp(m_sHeader.sender_IP_address, arp->target_IP_address, 4) == 0) {
+		arp->op_Code = 2;
+		memcpy(m_replyHeader.target_IP_address, arp->sender_IP_address, IP_ADDRESS_SIZE);
+		memcpy(m_replyHeader.target_ethernet_address, arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
+		memcpy(m_replyHeader.sender_IP_address, arp->target_IP_address, IP_ADDRESS_SIZE);
+		memcpy(m_replyHeader.target_ethernet_address, arp->target_ethernet_address, ETHER_ADDRESS_SIZE);
+		AfxMessageBox("Received!!");
 	}
-	m_pThread = AfxBeginThread(ReceiveThread, (LPVOID)this);
-	return true;
-}
-// °¡Àå ¾Æ·¡ °èÃþÀÎ File °èÃþÀÇ Receive ÇÔ¼ö ÀÔ´Ï´Ù. IpcBuff.txt¶ó´Â ÆÄÀÏÀ» ÀÐ½À´Ï´Ù.
-// ±× ÈÄ, Å©±â¿¡ ¸Â°Ô ÀÌ¸¦ È®ÀÎÇÏ°í, À§ÀÇ Çì´õÀÎ Ethernet °èÃþ¿¡ ÀüÇØÁÝ´Ï´Ù.
 
-BOOL  CNILayer::send_packet(pcap_t* handle, u_char* message, int len) {
-	if (pcap_sendpacket(handle, message, len) != 0) {
-		return false;
-	}
-	else return true;
+	return FALSE;
 }
 
-UINT CNILayer::ReceiveThread(LPVOID pParam) {
-	CNILayer* PID = (CNILayer*)pParam;
-	struct pcap_pkthdr* header;
-	const u_char* pkt_data;
-	int result;
-	while (PID->is_set) {
-		result = pcap_next_ex(PID->fp, &header, &pkt_data);
-		if (result == 0) {
-
-		}
-		else if (result == 1) {
-			if (PID->mp_aUpperLayer[0]->Receive((u_char*)pkt_data)) {
-				if (PID->mp_aUpperLayer[0]->sendAck((u_char*)pkt_data));
-				else {
-					AfxMessageBox(_T("Can't Send ACK_MSG"));
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-void CNILayer::SetAdpterDeivce() {
-	pcap_if_t* alldevs, * d;
-	char errbuff[1001];
-	if (pcap_findalldevs(&alldevs, errbuff) == -1 || !alldevs) {
-		AfxMessageBox(_T("Any NIC not detected"));
-		exit(1);
-	}
-	for (d = alldevs; d; d = d->next) {
-		m_AdapterList[m_Maxadapter] = d;
-		m_Maxadapter++;
-	}
-}
-
-pcap_if_t* CNILayer::GetAdapter(int index) {
-	return m_AdapterList[index];
-}
-
-int CNILayer::GetMaxAdapterIndex() {
-	return m_Maxadapter;
-}
-
-void CNILayer::Set_is_set(bool value) {
-	is_set = value;
-}
-bool CNILayer::Get_is_set() {
-	return is_set;
-}
-
-int CNILayer::GetCurAdapterIndex() {
-	return curAdapterIndex;
-}
-void CNILayer::SetCurAdapterIndex(int value) {
-	curAdapterIndex = value;
+void ArpLayer::Set_Sender_Address(unsigned char* MACAddr, unsigned char *IpAddress) {
+	memcpy(m_sHeader.sender_ethernet_address, MACAddr, 6);
+	memcpy(m_sHeader.sender_IP_address, IpAddress, 4);
 }

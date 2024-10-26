@@ -11,7 +11,8 @@
 #include "framework.h"
 #include "BaseLayer.h"
 #include "LayerManager.h"
-#include "ChatAppLayer.h"
+#include "ArpLayer.h"
+#include "ipLayer.h"
 #include "EthernetLayer.h"
 #include "CNILayer.h"
 
