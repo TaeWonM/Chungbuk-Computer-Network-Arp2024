@@ -320,21 +320,20 @@ BOOL Cipc2023Dlg::Receive(unsigned char* ppayload)
 	memcpy(DstMacAddr, &ppayload[4], 6);
 	CString DstIpAddrStr, DstMacAddrStr;
 	DstIpAddrStr.Format(_T("%d.%d.%d.%d"), DstIpAddr[0], DstIpAddr[1], DstIpAddr[2], DstIpAddr[3]);
-	DstMacAddrStr.Format(_T("%02x:%02x:%02x:%02x:%02x:%02x"), DstMacAddrStr[0], DstMacAddrStr[1], DstMacAddrStr[2], DstMacAddrStr[3], DstMacAddrStr[4], DstMacAddrStr[6]);
+	DstMacAddrStr.Format(_T("%02x:%02x:%02x:%02x:%02x:%02x"), DstMacAddr[0], DstMacAddr[1], DstMacAddr[2], DstMacAddr[3], DstMacAddr[4], DstMacAddr[5]);
 	int i = 0;
-	unsigned char* SrcIpAddr;
 	for (i = 0; i < m_ListControl.GetItemCount(); i++) {
-		SrcIpAddr = IpAddr2HexInt(m_ListControl.GetItemText(i, 0));
-		if (m_ListControl.GetItemText(i, 0) == DstIpAddrStr) {
-			m_ListControl.SetItemText(i, 1, DstMacAddrStr);
-			m_ListControl.SetItemText(i, 2, _T("complete"));
+		if (m_ListControl.GetItemText(i, 1) == DstIpAddrStr) {
+			m_ListControl.SetItemText(i, 2, DstMacAddrStr);
+			m_ListControl.SetItemText(i, 3, _T("complete"));
 		}
+		return FALSE;
 	}
-	m_ListControl.SetItemText(i, 0, DstIpAddrStr);
-	m_ListControl.SetItemText(i, 1, DstMacAddrStr);
-	m_ListControl.SetItemText(i, 2, _T("complete"));
+	m_ListControl.SetItemText(i, 1, DstIpAddrStr);
+	m_ListControl.SetItemText(i, 2, DstMacAddrStr);
+	m_ListControl.SetItemText(i, 3, _T("complete"));
 	//////////////////////////////////////////////////////////////////////////////////
-	return TRUE;
+	return FALSE;
 }
 // ppayload를 인수로 받으며 이 부분을 받으면 List 부분에 받은 ppayload를 넣어 사용자의 Dlg에 보이도록 합니다.
 
@@ -567,7 +566,7 @@ unsigned char* Cipc2023Dlg::IpAddr2HexInt(CString Ip_address)
 	// MAC 주소를 ':' 로 구분하여 16진수 변환
 	for (int i = 0; i < 4; i++) {
 		if (AfxExtractSubString(TempToken, Ip_address, i, '.')) {
-			ether[i] = (unsigned char)strtoul(TempToken.GetString(), NULL, 16);
+			ether[i] = (unsigned char)strtoul(TempToken.GetString(), NULL, 10);
 		}
 		else {
 			AfxMessageBox(_T("주소를 설정 오류발생",

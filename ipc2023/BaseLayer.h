@@ -34,6 +34,7 @@ public:
 	virtual	BOOL	Send(unsigned char*, int, int) { return FALSE; }
 	// param : unsigned char*	- the data of the underlayer
 	virtual	BOOL	Receive(unsigned char* ppayload) { return FALSE; }
+	virtual	BOOL	Receive(unsigned char* ppayload1, unsigned char* ppayload2) { return FALSE; }
 	virtual	BOOL	Receive() { return FALSE; }
 	virtual	BOOL	sendAck(unsigned char* ppayload) { return FALSE; }
 	virtual BOOL	upperLayerKillTimer(int num) { return mp_aUpperLayer[0]->upperLayerKillTimer(num); };

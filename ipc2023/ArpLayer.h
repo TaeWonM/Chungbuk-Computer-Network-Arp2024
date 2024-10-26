@@ -20,7 +20,6 @@ private:
 	CObject* mp_Dlg;
 
 public:
-
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* DstIpAddress, int nlength);
 	void			Set_Sender_Address(unsigned char* MACAddr, unsigned char* IpAddress);
