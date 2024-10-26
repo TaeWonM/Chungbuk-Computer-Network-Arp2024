@@ -325,7 +325,7 @@ BOOL Cipc2023Dlg::Receive(unsigned char* ppayload)
 	unsigned char* SrcIpAddr;
 	for (i = 0; i < m_ListControl.GetItemCount(); i++) {
 		SrcIpAddr = IpAddr2HexInt(m_ListControl.GetItemText(i, 0));
-		if (memcmp(SrcIpAddr, DstIpAddr, 4) == 0) {
+		if (m_ListControl.GetItemText(i, 0) == DstIpAddrStr) {
 			m_ListControl.SetItemText(i, 1, DstMacAddrStr);
 			m_ListControl.SetItemText(i, 2, _T("complete"));
 		}

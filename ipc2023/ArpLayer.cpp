@@ -65,14 +65,21 @@ BOOL ArpLayer::Receive(unsigned char* ppayload)
 {
 	P_ARP_HEADER arp = (P_ARP_HEADER)ppayload;
 	if (memcmp(m_sHeader.sender_IP_address, arp->target_IP_address, 4) == 0) {
-		arp->op_Code = 2;
-		memcpy(m_replyHeader.target_IP_address, arp->sender_IP_address, IP_ADDRESS_SIZE);
-		memcpy(m_replyHeader.target_ethernet_address, arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
-		memcpy(m_replyHeader.sender_IP_address, arp->target_IP_address, IP_ADDRESS_SIZE);
-		memcpy(m_replyHeader.target_ethernet_address, arp->target_ethernet_address, ETHER_ADDRESS_SIZE);
-		AfxMessageBox("Received!!");
+		if (arp->op_Code == 1) {
+			arp->op_Code = 2;
+			memcpy(m_replyHeader.target_IP_address, arp->sender_IP_address, IP_ADDRESS_SIZE);
+			memcpy(m_replyHeader.target_ethernet_address, arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
+			memcpy(m_replyHeader.sender_IP_address, arp->target_IP_address, IP_ADDRESS_SIZE);
+			memcpy(m_replyHeader.target_ethernet_address, arp->target_ethernet_address, ETHER_ADDRESS_SIZE);
+			mp_UnderLayer->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE, 1);
+		}
+		if (arp->op_Code == 2) {
+			unsigned char* ppayload = (unsigned char*)malloc(sizeof(unsigned char) * (IP_ADDRESS_SIZE + ETHER_ADDRESS_SIZE));
+			memcpy(ppayload, arp->sender_IP_address, IP_ADDRESS_SIZE);
+			memcpy(&ppayload[IP_ADDRESS_SIZE], arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
+			mp_aUpperLayer[0]->Receive(ppayload);
+		}
 	}
-
 	return FALSE;
 }
 

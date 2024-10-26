@@ -56,5 +56,5 @@ BOOL ipLayer::Send(unsigned char* ppayload, int nlength)
 
 BOOL ipLayer::Receive(unsigned char* ppayload)
 {
-	return TRUE;
+	return mp_aUpperLayer[0]->Receive(ppayload);
 }
