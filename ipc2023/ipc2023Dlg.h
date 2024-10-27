@@ -55,7 +55,7 @@ public:
 
 
 public:
-	BOOL			Receive(unsigned char* ppayload);
+	BOOL			Receive(CString IpAddr, CString MacAddr, BOOL is_in);
 	inline void		SendData();
 
 private:

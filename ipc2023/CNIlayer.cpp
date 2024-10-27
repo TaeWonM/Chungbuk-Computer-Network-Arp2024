@@ -87,10 +87,6 @@ UINT CNILayer::ReceiveThread(LPVOID pParam) {
 		}
 		else if (result == 1) {
 			if (PID->mp_aUpperLayer[0]->Receive((u_char*)pkt_data)) {
-				if (PID->mp_aUpperLayer[0]->sendAck((u_char*)pkt_data));
-				else {
-					AfxMessageBox(_T("Can't Send ACK_MSG"));
-				}
 			}
 		}
 	}

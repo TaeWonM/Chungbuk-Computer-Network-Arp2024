@@ -10,6 +10,12 @@
 ////////////////OCT.11added///////////
 #include <afxdlgs.h> //안에 포함된 CFileDialog사용하기 위해 추가
 //////////////////////////////////////
+
+#define LIST_CONTROLL_IP_COLUMN 1 
+#define LIST_CONTROLL_MAC_COLUMN 2 
+#define LIST_CONTROLL_STATUS_COLUMN 3
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -96,7 +102,7 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	// 대화 상자 레이어 추가
 
 	// 레이어를 연결한다. (레이어 생성)
-	m_LayerMgr.ConnectLayers("NI ( *Ethernet ( *Arp ( *Ip ( *ChatDlg ) ) ) )");
+	m_LayerMgr.ConnectLayers("NI ( *Ethernet ( *Arp ( *Ip ( *ChatDlg ) ) ) ( *Ip ( *ChatDlg ) ) )");
 	// 기존에 file 레이어 부분 대신 NI 레이어를 추가함
 	////////////////////////추가됨///////////////////////////////
 	m_Ip = (ipLayer*)m_LayerMgr.GetLayer("Ip");
@@ -290,25 +296,29 @@ void Cipc2023Dlg::SendData()
 	else {
 		int i = 0;
 		for (i = 0; i < m_ListControl.GetItemCount(); i++) {
-			if (m_ListControl.GetItemText(i, 1) == unDstIpAddrStr) {
-				if (m_ListControl.GetItemText(i, 3) == "complete") {
-					SetTimer(timerIndex[i], 3000, NULL);
+			if (m_ListControl.GetItemText(i, LIST_CONTROLL_IP_COLUMN) == unDstIpAddrStr) {
+				if (m_ListControl.GetItemText(i, LIST_CONTROLL_STATUS_COLUMN) == "complete") {
+					int k;
+					for (k = 0; k < timerMaxIndex; k++) {
+						if (i == timerIndex[k]) break;
+					}
+					SetTimer(k, 30000, NULL);
 					AfxMessageBox(_T("Already Set.."));
 					return;
 				}
 				else {
-					m_Arp->Send(unDst_Ip_Address, 4);
+					m_Ip->Send(unDst_Ip_Address, 4);
 					return;
 				}
 			}
 		}
 		m_ListControl.InsertItem(i, "");
-		m_ListControl.SetItemText(i, 1, unDstIpAddrStr);
-		m_ListControl.SetItemText(i, 3, _T("Incomplete"));
+		m_ListControl.SetItemText(i, LIST_CONTROLL_IP_COLUMN, unDstIpAddrStr);
+		m_ListControl.SetItemText(i, LIST_CONTROLL_STATUS_COLUMN, _T("Incomplete"));
 		SetTimer(i, 3000, NULL);
 		timerIndex[i] = i;
 		timerMaxIndex++;
-		m_Arp->Send(unDst_Ip_Address, 4);
+		m_Ip->Send(unDst_Ip_Address, 4);
 	}
 }
 // Send 버튼이 눌리면 다음의 함수를 실행합니다.
@@ -316,41 +326,44 @@ void Cipc2023Dlg::SendData()
 // m_unDstAddr가 ff(즉, 브로딩캐스트 Addr)가 아니면 기존의 m_unSrcAddr과 m_unDstAddr를 이용하여 수신자의 chatDlg에 나타날 문자를 MsgHeader에 포멧팅합니다.
 // 그 후 메시지를 저장하고, Dlg계층의 하위 계층인 ChatAppLayer의 Send함수로 넘겨줍니다.
 
-BOOL Cipc2023Dlg::Receive(unsigned char* ppayload)
+BOOL Cipc2023Dlg::Receive(CString IpAddr, CString MacAddr, BOOL is_In)
 {
 	/////////////////////////////////수정됨//////////////////////////////////////////
-	unsigned char DstIpAddr[4];
-	unsigned char DstMacAddr[6];
-	memcpy(DstIpAddr, ppayload, 4);
-	memcpy(DstMacAddr, &ppayload[4], 6);
-	CString DstIpAddrStr, DstMacAddrStr;
-	DstIpAddrStr.Format(_T("%d.%d.%d.%d"), DstIpAddr[0], DstIpAddr[1], DstIpAddr[2], DstIpAddr[3]);
-	DstMacAddrStr.Format(_T("%02x:%02x:%02x:%02x:%02x:%02x"), DstMacAddr[0], DstMacAddr[1], DstMacAddr[2], DstMacAddr[3], DstMacAddr[4], DstMacAddr[5]);
-	int i = 0;
-	for (i = 0; i < m_ListControl.GetItemCount(); i++) {
-		if (m_ListControl.GetItemText(i, 1) == DstIpAddrStr) {
-			m_ListControl.SetItemText(i, 2, DstMacAddrStr);
-			m_ListControl.SetItemText(i, 3, _T("complete"));
-			SetTimer(i, 30000, NULL);
+	if (is_In) {
+		int i = 0;
+		for (i = 0; i < m_ListControl.GetItemCount(); i++) {
+			if (m_ListControl.GetItemText(i, LIST_CONTROLL_IP_COLUMN) == IpAddr) {
+				m_ListControl.SetItemText(i, LIST_CONTROLL_MAC_COLUMN, MacAddr);
+				m_ListControl.SetItemText(i, LIST_CONTROLL_STATUS_COLUMN, _T("complete"));
+				int k;
+				for (k = 0; k < timerMaxIndex; k++) {
+					if (i == timerIndex[k]) break;
+				}
+				SetTimer(k, 30000, NULL);
+			}
+			return FALSE;
 		}
 		return FALSE;
 	}
-	m_ListControl.InsertItem(i, "");
-	m_ListControl.SetItemText(i, 1, DstIpAddrStr);
-	m_ListControl.SetItemText(i, 2, DstMacAddrStr);
-	m_ListControl.SetItemText(i, 3, _T("complete"));
-	for (int k = 0; k < timerMaxIndex; k++) {
-		if (timerIndex[k] <= -1) {
-			SetTimer(k, 30000, NULL);
-			timerIndex[k] = i;
-			return FALSE;
+	else {
+		int i = m_ListControl.GetItemCount();
+		m_ListControl.InsertItem(i, "");
+		m_ListControl.SetItemText(i, LIST_CONTROLL_IP_COLUMN, IpAddr);
+		m_ListControl.SetItemText(i, 2, MacAddr);
+		m_ListControl.SetItemText(i, LIST_CONTROLL_STATUS_COLUMN, _T("complete"));
+		for (int k = 0; k < timerMaxIndex; k++) {
+			if (timerIndex[k] <= -1) {
+				SetTimer(k, 30000, NULL);
+				timerIndex[k] = i;
+				return FALSE;
+			}
 		}
+		SetTimer(i, 30000, NULL);
+		timerIndex[i] = i;
+		timerMaxIndex++;
+		//////////////////////////////////////////////////////////////////////////////////
+		return FALSE;
 	}
-	SetTimer(i, 30000, NULL);
-	timerIndex[i] = i;
-	timerMaxIndex++;
-	//////////////////////////////////////////////////////////////////////////////////
-	return FALSE;
 }
 // ppayload를 인수로 받으며 이 부분을 받으면 List 부분에 받은 ppayload를 넣어 사용자의 Dlg에 보이도록 합니다.
 
@@ -455,6 +468,7 @@ void Cipc2023Dlg::OnTimer(UINT nIDEvent)
 	}
 	else {
 		KillTimer(nIDEvent);
+		m_Ip->RemoveItem(m_ListControl.GetItemText(timerIndex[nIDEvent], 1), m_ListControl.GetItemText(timerIndex[nIDEvent], 2));
 		m_ListControl.DeleteItem(timerIndex[nIDEvent]);
 		timerIndex[nIDEvent] = -1;
 		for (int k = nIDEvent + 1; k < timerMaxIndex; k++) {

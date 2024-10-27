@@ -19,8 +19,7 @@ static char THIS_FILE[] = __FILE__;
 //////////////////////////////////////////////////////////////////////
 
 CBaseLayer::CBaseLayer(char* pName)
-	: m_nUpperLayerCount(0),
-	mp_UnderLayer(NULL)
+	: m_nUpperLayerCount(0), m_nUnderLayerCount(0)
 {
 	m_pLayerName = pName;
 }
@@ -43,7 +42,7 @@ void CBaseLayer::SetUnderUpperLayer(CBaseLayer* pUULayer)
 	//////////////////////// fill the blank ///////////////////////////////
 		// 인자로 받은 계층은 현재 계층의 Under로 놓고
 		// 현재 계층을 인자로 받은 계층의 Upper로 놓는다.
-	this->mp_UnderLayer = pUULayer;
+	SetUnderLayer(pUULayer);
 	pUULayer->SetUpperLayer(this);
 	///////////////////////////////////////////////////////////////////////
 }
@@ -94,7 +93,7 @@ void CBaseLayer::SetUnderLayer(CBaseLayer* pUnderLayer)
 	}
 
 	// UnderLayer assignment..
-	this->mp_UnderLayer = pUnderLayer;
+	this->mp_UnderLayer[m_nUnderLayerCount++] = pUnderLayer;
 }
 // 아래의 계층을 설정하는 함수입니다. mp_aUpperLayer라는 배열에 pUpperLayer를 넣습니다.
 
@@ -115,9 +114,11 @@ CBaseLayer* CBaseLayer::GetUpperLayer(int nindex)
 }
 // index를 통해서 계층을 얻는 getter함수입니다.
 
-CBaseLayer* CBaseLayer::GetUnderLayer()
+CBaseLayer* CBaseLayer::GetUnderLayer(int index)
 {
-	if (!mp_UnderLayer)
+	if (index < 0 ||
+		index > m_nUnderLayerCount ||
+		m_nUnderLayerCount < 0)
 	{
 #ifdef _DEBUG
 		TRACE("[CBaseLayer::GetUnderLayer] There is not a UnerLayer..\n");
@@ -125,7 +126,7 @@ CBaseLayer* CBaseLayer::GetUnderLayer()
 		return NULL;
 	}
 
-	return mp_UnderLayer;
+	return mp_UnderLayer[index];
 }
 // 현재 기준으로 아래 계층이라고 설정된 값을 출력하는 부분입니다.
 

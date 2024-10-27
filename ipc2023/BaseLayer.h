@@ -18,7 +18,7 @@ class CBaseLayer
 public:
 	char* GetLayerName();
 
-	CBaseLayer* GetUnderLayer();
+	CBaseLayer* GetUnderLayer(int nindex);
 	CBaseLayer* GetUpperLayer(int nindex);
 	void			SetUnderUpperLayer(CBaseLayer* pUULayer = NULL);
 	void			SetUpperUnderLayer(CBaseLayer* pUULayer = NULL);
@@ -34,17 +34,14 @@ public:
 	virtual	BOOL	Send(unsigned char*, int, int) { return FALSE; }
 	// param : unsigned char*	- the data of the underlayer
 	virtual	BOOL	Receive(unsigned char* ppayload) { return FALSE; }
-	virtual	BOOL	Receive(unsigned char* ppayload1, unsigned char* ppayload2) { return FALSE; }
-	virtual	BOOL	Receive() { return FALSE; }
-	virtual	BOOL	sendAck(unsigned char* ppayload) { return FALSE; }
-	virtual BOOL	upperLayerKillTimer(int num) { return mp_aUpperLayer[0]->upperLayerKillTimer(num); };
-	virtual BOOL	upperLayerSetTimer(int num) { return mp_aUpperLayer[0]->upperLayerSetTimer(num); };
-	virtual BOOL	SetProgressbar(int max, int cur) { return mp_aUpperLayer[0]->SetProgressbar(max, cur); }
+	virtual	BOOL	Receive(CString IpAddr, CString MacAddr, BOOL is_in) { return FALSE; }
+	virtual BOOL	SetMacDstAddress(unsigned char* ppayload) { return mp_UnderLayer[0]->SetMacDstAddress(ppayload); }
 protected:
 	char* m_pLayerName;
-	CBaseLayer* mp_UnderLayer;							// UnderLayer pointer
+	CBaseLayer* mp_UnderLayer[MAX_LAYER_NUMBER];							// UnderLayer pointer
 	CBaseLayer* mp_aUpperLayer[MAX_LAYER_NUMBER];		// UpperLayer pointer
 	int				m_nUpperLayerCount;						// UpperLayer Count
+	int				m_nUnderLayerCount;
 };
 
 #endif // !defined(AFX_BASELAYER_H__041C5A07_23A9_4CBC_970B_8743460A7DA9__INCLUDED_)

@@ -38,33 +38,19 @@ void CEthernetLayer::ResetHeader()
 }
 //m_sHeader�� Ethernet ��� �κ��� �ʱ�ȭ�ϱ� ����, Reset�Լ��Դϴ�.
 
-unsigned char* CEthernetLayer::GetCSourceAddress()
+unsigned char* CEthernetLayer::GetSourceAddress()
 {
 	return m_sHeader.enet_srcaddr;
 }
 //enet_srcaddr�� �����ϴ� getter�Դϴ�.
 
-unsigned char* CEthernetLayer::GetCDestinAddress()
+unsigned char* CEthernetLayer::GetDestinAddress()
 {
 	//////////////////////// fill the blank ///////////////////////////////
 	// Ethernet ������ �ּ� return
 	return m_sHeader.enet_dstaddr;
 	///////////////////////////////////////////////////////////////////////
 }
-unsigned char* CEthernetLayer::GetFSourceAddress()
-{
-	return m_sHeader.enet_srcaddr;
-}
-//enet_srcaddr�� �����ϴ� getter�Դϴ�.
-
-unsigned char* CEthernetLayer::GetFDestinAddress()
-{
-	//////////////////////// fill the blank ///////////////////////////////
-	// Ethernet ������ �ּ� return
-	return m_sHeader.enet_dstaddr;
-	///////////////////////////////////////////////////////////////////////
-}
-//enet_dstaddr�� �����ϴ� getter�Դϴ�.
 
 void CEthernetLayer::SetSourceAddress(unsigned char* pAddress)
 {
@@ -89,11 +75,10 @@ BOOL CEthernetLayer::Send(unsigned char* ppayload, int nlength, int DetLayer)
 	// ACK ó��: ä�� ������ ������ ���
 	if (DetLayer == ARP_LAYER) {
 		m_sHeader.enet_type = htons(0x0806);
-		memset(m_sHeader.enet_dstaddr, 255, 6);
-		bSuccess = mp_UnderLayer->Send((unsigned char*)&m_sHeader, nlength + ETHER_HEADER_SIZE);
+		bSuccess = mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, nlength + ETHER_HEADER_SIZE);
 	}
 	else if (DetLayer == FILE_APP_LAYER) {
-		bSuccess = mp_UnderLayer->Send((unsigned char*)&m_sHeader, nlength + ETHER_HEADER_SIZE);
+		bSuccess = mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, nlength + ETHER_HEADER_SIZE);
 	}
 	else {
 		return FALSE;
@@ -138,22 +123,13 @@ BOOL CEthernetLayer::Receive(unsigned char* ppayload)
 //---------------------------------------------------- ������� ---------------------------------------
 
 //--------------------------------------------------- ���� 2024.10.13.-------------------------------------
-BOOL CEthernetLayer::sendAck(unsigned char* ppayload) {
-	PETHERNET_HEADER m_preHeader = (PETHERNET_HEADER)ppayload;
-	BOOL ackSuccess = FALSE;
-	memcpy(m_sHeader.enet_dstaddr, m_preHeader->enet_srcaddr, 6);
-	if (ntohs(m_preHeader->enet_type) == 0x2080) { // ä�� Ÿ���� ���
-		m_sHeader.enet_type = htons(0x2080); // Ack�� Ÿ�Ե� ä�� Ÿ�԰� ���� �����ϰ� Chatapplayer�� Ack ����
-		ackSuccess = mp_aUpperLayer[0]->sendAck((unsigned char*)m_sHeader.enet_data);
-	}
-	else if (ntohs(m_preHeader->enet_type) == 0x2081) { // ���� Ÿ���� ���
-		m_sHeader.enet_type = htons(0x2081); // Ack�� Ÿ�Ե� ���� Ÿ�԰� ���� �����ϰ� Fileapplayer�� Ack ���� 
-		ackSuccess = mp_aUpperLayer[1]->sendAck((unsigned char*)m_sHeader.enet_data);
-	}
-	return ackSuccess;
-}
 //---------------------------------------------------- ������� ---------------------------------------
 
 void CEthernetLayer::SetBroadcasting_address() {
 	memset(BROADCASTING_ADDR, 255, 6);
+}
+
+BOOL CEthernetLayer::SetMacDstAddress(unsigned char* ppayload) {
+	memcpy(m_sHeader.enet_dstaddr, ppayload, ETHER_ADDRESS_SIZE);
+	return TRUE;
 }

@@ -21,13 +21,11 @@ private:
 public:
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* ppayload, int nlength, int DetLayer);
-	BOOL			sendAck(unsigned char* ppayload);
+	BOOL			SetMacDstAddress(unsigned char* ppayload);
 	void			SetDestinAddress(unsigned char* pAddress);
 	void			SetSourceAddress(unsigned char* pAddress);
-	unsigned char* GetCSourceAddress();
-	unsigned char* GetCDestinAddress();
-	unsigned char* GetFSourceAddress();
-	unsigned char* GetFDestinAddress();
+	unsigned char* GetSourceAddress();
+	unsigned char* GetDestinAddress();
 	unsigned char BROADCASTING_ADDR[6];
 	unsigned char m_ReceivedDstAddr[6];
 	void SetBroadcasting_address();

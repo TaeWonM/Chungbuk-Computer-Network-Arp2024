@@ -12,17 +12,20 @@
 
 #include "BaseLayer.h"
 #include "pch.h"
+#include <map>
 class ipLayer
 	: public CBaseLayer
 {
 private:
 	inline void		ResetHeader();
 	CObject* mp_Dlg;
-
+	CString nullString;
 public:
 	//BOOL			sendAck(unsigned char* ppayload);
+	std::map<CString,CString> m_IpMap;
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* ppayload, int nlength);
+	void			RemoveItem(CString IpAddr, CString MacAddr);
 	ipLayer(char* pName);
 	virtual ~ipLayer();
 };
