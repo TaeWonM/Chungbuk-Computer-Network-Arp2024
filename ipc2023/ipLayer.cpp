@@ -63,10 +63,14 @@ BOOL ipLayer::Receive(unsigned char* ppayload)
 	CString DstIpAddrStr, DstMacAddrStr;
 	DstIpAddrStr.Format(_T("%d.%d.%d.%d"), DstIpAddr[0], DstIpAddr[1], DstIpAddr[2], DstIpAddr[3]);
 	DstMacAddrStr.Format(_T("%02x:%02x:%02x:%02x:%02x:%02x"), DstMacAddr[0], DstMacAddr[1], DstMacAddr[2], DstMacAddr[3], DstMacAddr[4], DstMacAddr[5]);
-	if (!m_IpMap.empty() && m_IpMap[DstIpAddrStr] == DstMacAddrStr) return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, TRUE);
+	if (!m_IpMap.empty() && m_IpMap.find(DstIpAddrStr) != m_IpMap.end()) return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, TRUE);
 	return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, FALSE);
 }
 
 void ipLayer::RemoveItem(CString IpAddr, CString MacAddr) {
-
+	auto iter = m_IpMap.find(IpAddr);
+	if (iter != m_IpMap.end())
+	{
+		m_IpMap.erase(m_IpMap.find(IpAddr));
+	}
 }

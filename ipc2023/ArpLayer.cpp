@@ -71,7 +71,7 @@ BOOL ArpLayer::Receive(unsigned char* ppayload)
 			memcpy(m_replyHeader.target_ethernet_address, arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
 			memcpy(m_replyHeader.sender_IP_address, arp->target_IP_address, IP_ADDRESS_SIZE);
 			memcpy(m_replyHeader.sender_ethernet_address, m_sHeader.sender_ethernet_address, ETHER_ADDRESS_SIZE);
-			mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
+			mp_UnderLayer[0]->SetMacDstAddress(m_replyHeader.target_ethernet_address);
 			mp_UnderLayer[0]->Send((unsigned char*)&m_replyHeader, ARP_HEADER_SIZE, 1);
 		}
 		unsigned char* payload = (unsigned char*)malloc(sizeof(unsigned char) * (IP_ADDRESS_SIZE + ETHER_ADDRESS_SIZE));
