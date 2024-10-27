@@ -1,5 +1,7 @@
 ﻿// ipc2023Dlg.cpp: 구현 파일
 //
+// 새로이 해야 할 부분 : 소스 IP가 빈 상태로 set 하면 메세지 띄우기
+
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "pch.h"
 #include "framework.h"
@@ -150,6 +152,7 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_ALL_DELETE_BTN, &Cipc2023Dlg::OnBnClickedAllDeleteBtn)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, &Cipc2023Dlg::OnLvnItemchangedList2)
 	ON_NOTIFY(IPN_FIELDCHANGED, IDC_DST_IP, &Cipc2023Dlg::OnIpnFieldchangedDstIp)
+	ON_NOTIFY(IPN_FIELDCHANGED, IDC_SRC_IP, &Cipc2023Dlg::OnIpnFieldchangedSrcIp)
 END_MESSAGE_MAP()
 
 
@@ -401,6 +404,8 @@ void Cipc2023Dlg::SetDlgState(int state)
 
 	CButton* pSendButton = (CButton*)GetDlgItem(bt_send);
 	CButton* pSetAddrButton = (CButton*)GetDlgItem(bt_setting);
+	CButton* pitemDeleteButton = (CButton*)GetDlgItem(IDC_ITEM_DELETE_BTN);
+	CButton* pallDeleteButton = (CButton*)GetDlgItem(IDC_ALL_DELETE_BTN);
 	///////////////////////////////////////////////////////////
 	// 상태에 따른 UI 요소 설정값 변경
 	switch (state)
@@ -408,7 +413,11 @@ void Cipc2023Dlg::SetDlgState(int state)
 	case IPC_INITIALIZING: // 초기화 상태, 추가한 버튼 3개 다 처음엔 비활성
 		pSendButton->EnableWindow(FALSE);
 		m_ListControl.EnableWindow(TRUE);
-		m_DstIp.EnableWindow(TRUE);
+		////////여기서 삭제 버튼 두개 다 비활성, 목적지 입력 비활성
+		m_DstIp.EnableWindow(FALSE);
+		pitemDeleteButton->EnableWindow(FALSE);
+		pallDeleteButton->EnableWindow(FALSE);
+		/////////////////////////////
 		break;
 	case IPC_READYTOSEND: // 전송 준비 상태, 추가한 버튼 중 파일선택 버튼이랑 주소 입력칸만 활성화
 		pSendButton->EnableWindow(TRUE);
@@ -433,6 +442,11 @@ void Cipc2023Dlg::SetDlgState(int state)
 		// NI레이어의 Set_is_set true 로 설정 (추가됨)
 		if(!m_NILayer->Receive()) SetDlgState(IPC_ADDR_RESET);
 		// NI레이어의 receive가 false인 경우 SetDlgState(IPC_ADDR_RESET)을 진행
+		// 여기서 삭제 버튼 활성화, 상대 주소 입력되게 하기
+		m_DstIp.EnableWindow(TRUE);
+		pitemDeleteButton->EnableWindow(TRUE);
+		pallDeleteButton->EnableWindow(TRUE);
+		//////////////////////////////////////////
 		break;
 	case IPC_ADDR_RESET: // 주소 재설정 상태
 		pSetAddrButton->SetWindowText(_T("설정(&O)"));
@@ -440,11 +454,15 @@ void Cipc2023Dlg::SetDlgState(int state)
 		// 네트워크 장치 콤보박스에 다시 접근할 수 있도록 설정
 		///////////////오늘 변경됨/////////////////////
 		m_NILayer->Set_is_set(false);
-		m_SrcIp.EnableWindow(FALSE);
+		m_SrcIp.EnableWindow(TRUE);//재설정하면 소스 IP 입력할 수 있게 설정
 		// NI레이어의 Set_is_set false 로 설정 (추가됨)
 		/////////////////////////////////////////////
 		// is_set 플래그 false로 설정(추가됨)
 		// 기존 코드에서 브로드캐스트 체크박스 관련 코드 삭제
+		m_DstIp.EnableWindow(FALSE);
+		pitemDeleteButton->EnableWindow(FALSE);
+		pallDeleteButton->EnableWindow(FALSE);
+		// 다시 버튼 2개 비활성, 목적지 비활성, 내 ip 칸 활성
 		break;
 	}
 
@@ -668,6 +686,14 @@ void Cipc2023Dlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult)
 
 
 void Cipc2023Dlg::OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+}
+
+
+void Cipc2023Dlg::OnIpnFieldchangedSrcIp(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
