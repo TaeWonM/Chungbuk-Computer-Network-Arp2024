@@ -151,8 +151,6 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_ITEM_DELETE_BTN, &Cipc2023Dlg::OnBnClickedItemDeleteBtn)
 	ON_BN_CLICKED(IDC_ALL_DELETE_BTN, &Cipc2023Dlg::OnBnClickedAllDeleteBtn)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, &Cipc2023Dlg::OnLvnItemchangedList2)
-	ON_NOTIFY(IPN_FIELDCHANGED, IDC_DST_IP, &Cipc2023Dlg::OnIpnFieldchangedDstIp)
-	ON_NOTIFY(IPN_FIELDCHANGED, IDC_SRC_IP, &Cipc2023Dlg::OnIpnFieldchangedSrcIp)
 END_MESSAGE_MAP()
 
 
@@ -684,18 +682,3 @@ void Cipc2023Dlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult)
 	int col = pNMIA->iSubItem;
 }
 
-
-void Cipc2023Dlg::OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	*pResult = 0;
-}
-
-
-void Cipc2023Dlg::OnIpnFieldchangedSrcIp(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	*pResult = 0;
-}
