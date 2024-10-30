@@ -120,4 +120,9 @@ public:
 	afx_msg void OnBnClickedAllDeleteBtn();
 	afx_msg void OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedProxyDeleteBtn();
+	afx_msg void OnBnClickedItemDeleteBtn2();
+	afx_msg void OnBnClickedProxyItemAddBtn();
+	afx_msg void OnIpnFieldchangedGarpAddress(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditSrc3();
 };

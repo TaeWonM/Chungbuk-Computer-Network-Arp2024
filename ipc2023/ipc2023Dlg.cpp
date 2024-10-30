@@ -125,7 +125,7 @@ void Cipc2023Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_SRC, m_unSrcAddr);
 	////////////////////새로 추가/////////////////
 	DDX_Control(pDX, IDC_COMBO1, m_Combobox);
-	DDX_Control(pDX, IDC_LIST2, m_ListControl);
+	DDX_Control(pDX, IDC_LIST3, m_ListControl);
 	DDX_Control(pDX, IDC_DST_IP, m_DstIp);
 	DDX_Control(pDX, IDC_SRC_IP, m_SrcIp);
 	// 현재 장치의 네트워크 장치를 보여줄 콤보박스 추가함
@@ -150,7 +150,6 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &Cipc2023Dlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_ITEM_DELETE_BTN, &Cipc2023Dlg::OnBnClickedItemDeleteBtn)
 	ON_BN_CLICKED(IDC_ALL_DELETE_BTN, &Cipc2023Dlg::OnBnClickedAllDeleteBtn)
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, &Cipc2023Dlg::OnLvnItemchangedList2)
 END_MESSAGE_MAP()
 
 
@@ -675,10 +674,4 @@ void Cipc2023Dlg::OnBnClickedAllDeleteBtn()
 }
 
 
-void Cipc2023Dlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	int row = pNMIA->iItem;
-	int col = pNMIA->iSubItem;
-}
 
