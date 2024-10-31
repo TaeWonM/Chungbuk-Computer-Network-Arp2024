@@ -1,10 +1,10 @@
 #pragma once
-// ArpLayer.h: interface for the CChatAppLayer class.
+// parpLayer.h: interface for the CChatAppLayer class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_ARPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_)
-#define AFX_ARPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_
+#if !defined(AFX_PARPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_)
+#define AFX_PARPLAYER_H__E78615DE_0F23_41A9_B814_34E2B3697EF2__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -12,7 +12,7 @@
 
 #include "BaseLayer.h"
 #include "pch.h"
-class ArpLayer
+class parpLayer
 	: public CBaseLayer
 {
 private:
@@ -23,10 +23,10 @@ public:
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* DstIpAddress, int nlength);
 	void			Set_Sender_Address(unsigned char* MACAddr, unsigned char* IpAddress);
-	ArpLayer(char* pName);
-	virtual ~ArpLayer();
+	parpLayer(char* pName);
+	virtual ~parpLayer();
 
-	typedef struct _ARP_HEADER {
+	typedef struct _PARP_HEADER {
 		unsigned short	hard_type; // total length of the data
 		unsigned short	portocal_type; // type of application data
 		unsigned char   hard_size;
@@ -37,12 +37,12 @@ public:
 		unsigned char	target_ethernet_address[ETHER_ADDRESS_SIZE];
 		unsigned char	target_IP_address[IP_ADDRESS_SIZE];
 
-	} ARP_HEADER, * P_ARP_HEADER;
+	} PARP_HEADER, * P_PARP_HEADER;
 	CString Msg;
 
 protected:
-	ARP_HEADER		m_sHeader;
-	ARP_HEADER		m_replyHeader;
+	PARP_HEADER		m_sHeader;
+	PARP_HEADER		m_replyHeader;
 
 	enum {
 		DATA_TYPE_CONT = 0x01,
