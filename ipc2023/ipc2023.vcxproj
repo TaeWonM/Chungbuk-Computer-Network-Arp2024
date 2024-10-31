@@ -78,8 +78,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\WpdPack\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinPack\WpdPack\Lib;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>C:\WinPack\WpdPack\Include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>C:\WpdPack\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

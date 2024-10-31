@@ -22,10 +22,13 @@ private:
 	CString nullString;
 public:
 	//BOOL			sendAck(unsigned char* ppayload);
-	std::map<CString,CString> m_IpMap;
+	std::map<CString, CString> m_IpMap;
+	std::map<CString, CString> m_PxIpMap; // proxy map
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* ppayload, int nlength);
 	void			RemoveItem(CString IpAddr, CString MacAddr);
+	BOOL			Search_Ip(unsigned char* DstIpAddress); // add
+
 	ipLayer(char* pName);
 	virtual ~ipLayer();
 };

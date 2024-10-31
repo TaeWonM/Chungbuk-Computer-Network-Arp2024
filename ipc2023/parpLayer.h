@@ -26,6 +26,8 @@ public:
 	parpLayer(char* pName);
 	virtual ~parpLayer();
 
+	BOOL			is_IPAddress(unsigned char* DstIpAddress);
+
 	typedef struct _PARP_HEADER {
 		unsigned short	hard_type; // total length of the data
 		unsigned short	portocal_type; // type of application data

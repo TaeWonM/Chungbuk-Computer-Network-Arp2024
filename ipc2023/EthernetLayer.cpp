@@ -106,10 +106,11 @@ BOOL CEthernetLayer::Receive(unsigned char* ppayload)
 		if (memcmp(pFrame->enet_dstaddr, BROADCASTING_ADDR, 6) == 0) is_Broadcast = true;
 		else memcpy(m_ReceivedDstAddr, pFrame->enet_srcaddr, 6);
 
-		if (ntohs(pFrame->enet_type) == 0x0806) {
+		if (ntohs(pFrame->enet_type) == 0x0806) { // ä�� Ÿ���̸� Chatapplayer�� �ø�
 			bSuccess = mp_aUpperLayer[0]->Receive((unsigned char*)pFrame->enet_data);
+			bSuccess = mp_aUpperLayer[1]->Receive((unsigned char*)pFrame->enet_data);
 		}
-		else if (ntohs(pFrame->enet_type) == 0x2081) { // Fileapplayer
+		else if (ntohs(pFrame->enet_type) == 0x2081) { // ���� Ÿ���̸� Fileapplayer�� �ø�
 			bSuccess = mp_aUpperLayer[1]->Receive((unsigned char*)pFrame->enet_data);
 		}
 	}

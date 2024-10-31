@@ -96,8 +96,7 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	m_LayerMgr.AddLayer(new ipLayer("Ip")); // ChatAppLayer 추가
 	m_LayerMgr.AddLayer(new CEthernetLayer("Ethernet")); // EthernetLayer 추가
 	m_LayerMgr.AddLayer(new CNILayer("NI"));
-	m_LayerMgr.AddLayer(new ArpLayer("Arp"));
-	m_LayerMgr.AddLayer(new parpLayer("parp"));
+	m_LayerMgr.AddLayer(new ArpLayer("Arp")); // 10.11 FileAppLayer 추가
 	// file 레이어를 NILAyer로 변경
 	// 여기서 이렇게 설정해줘서 다른 레이어 시작 시 해당하는 클래스 생성하면
 	// 자동으로 pName에 이름이 넘어가는 것
@@ -117,7 +116,6 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	// 위에서 추가한 레이어를 특정 변수에 저장하여 사용
 	// 10.11 추가함
 	m_Arp = (ArpLayer*)m_LayerMgr.GetLayer("Arp");
-	m_parp = (parpLayer*)m)LayerMgr.GetLayer("parp");
 }
 
 void Cipc2023Dlg::DoDataExchange(CDataExchange* pDX)

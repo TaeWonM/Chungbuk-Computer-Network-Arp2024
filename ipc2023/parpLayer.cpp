@@ -1,5 +1,4 @@
-﻿// ChatAppLayer.cpp: implementation of the CChatAppLayer class.
-//
+﻿//
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
@@ -70,6 +69,13 @@ BOOL parpLayer::Receive(unsigned char* ppayload)
 			memcpy(m_replyHeader.sender_ethernet_address, m_sHeader.sender_ethernet_address, ETHER_ADDRESS_SIZE);
 			mp_UnderLayer[0]->SetMacDstAddress(m_replyHeader.target_ethernet_address);
 			mp_UnderLayer[0]->Send((unsigned char*)&m_replyHeader, ARP_HEADER_SIZE, 1);
+			// B request
+			memcpy(m_sHeader.target_IP_address, parp->target_IP_address, IP_ADDRESS_SIZE);
+			memset(m_sHeader.target_ethernet_address, 255, ETHER_ADDRESS_SIZE);
+			memcpy(m_sHeader.sender_IP_address, parp->sender_IP_address, IP_ADDRESS_SIZE);
+			memcpy(m_sHeader.sender_ethernet_address, m_sHeader.sender_ethernet_address, ETHER_ADDRESS_SIZE);
+			mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
+			mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE, 1);
 		}
 		unsigned char* payload = (unsigned char*)malloc(sizeof(unsigned char) * (IP_ADDRESS_SIZE + ETHER_ADDRESS_SIZE));
 		memcpy(payload, arp->sender_IP_address, IP_ADDRESS_SIZE);
@@ -83,9 +89,4 @@ void parpLayer::Set_Sender_Address(unsigned char* MACAddr, unsigned char* IpAddr
 	memcpy(m_sHeader.sender_ethernet_address, MACAddr, 6);
 	memcpy(m_sHeader.sender_IP_address, IpAddress, 4);
 }
-
-
-
-
-
 
