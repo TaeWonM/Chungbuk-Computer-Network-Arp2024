@@ -74,3 +74,12 @@ void ipLayer::RemoveItem(CString IpAddr, CString MacAddr) {
 		m_IpMap.erase(m_IpMap.find(IpAddr));
 	}
 }
+
+BOOL ipLayer::Search_Ip(unsigned char* DstIpAddress) {
+	CString DstIpStr;
+	DstIpStr.Format(_T("%d.%d.%d.%d"), DstIpAddress[0], DstIpAddress[1], DstIpAddress[2], DstIpAddress[3]);
+	if (!m_PxIpMap.empty() && m_PxIpMap.find(DstIpStr) != m_PxIpMap.end())
+		return TRUE;
+	else
+		return FALSE;
+}

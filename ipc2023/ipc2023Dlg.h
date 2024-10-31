@@ -6,6 +6,7 @@
 
 #include "LayerManager.h"	// Added by ClassView
 #include "ArpLayer.h"	// Added by ClassView
+#include "parpLayer.h"
 #include "ipLayer.h"	// Added by ClassView
 #include "EthernetLayer.h"	// Added by ClassView
 #include "CNILayer.h"	// Added by ClassView
@@ -85,6 +86,7 @@ private:
 	CEthernetLayer* m_EthernetLayer;
 	CNILayer* m_NILayer;
 	ArpLayer* m_Arp;	// 추가함
+	parpLayer* m_parp;	// 추가함
 	// Implementation
 	UINT			m_wParam;
 	DWORD			m_lParam;
