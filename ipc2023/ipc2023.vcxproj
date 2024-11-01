@@ -78,7 +78,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\WpdPack\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WpdPack\Lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\WinPack\WpdPack\Lib;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>C:\WinPack\WpdPack\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -195,6 +196,7 @@
     <ClInclude Include="ipc2023Dlg.h" />
     <ClInclude Include="ipLayer.h" />
     <ClInclude Include="LayerManager.h" />
+    <ClInclude Include="parpLayer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -210,6 +212,7 @@
     <ClCompile Include="ipc2023Dlg.cpp" />
     <ClCompile Include="ipLayer.cpp" />
     <ClCompile Include="LayerManager.cpp" />
+    <ClCompile Include="parpLayer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
