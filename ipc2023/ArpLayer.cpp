@@ -74,6 +74,8 @@ void ArpLayer::UpdateCacheTable(unsigned char* ipAddress, unsigned char* macAddr
 
 BOOL ArpLayer::Send(unsigned char* DstIpAddress, int nlength)
 {
+	memcpy(m_sHeader.sender_ethernet_address, m_macAddr, ETHER_ADDRESS_SIZE);
+	memcpy(m_sHeader.sender_IP_address, m_ipAddr, IP_ADDRESS_SIZE);
 	memcpy(m_sHeader.target_IP_address, DstIpAddress, nlength);
 	memset(m_sHeader.target_ethernet_address, 255, ETHER_ADDRESS_SIZE);
 	mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
@@ -86,7 +88,7 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 
 	P_ARP_HEADER arp = (P_ARP_HEADER)ppayload;
 	// GARP 패킷인지 확인: 송신자의 IP 주소 = IP 주소, 대상 MAC 주소 = 브로드캐스트 주소인지 확인
-	if (memcmp(m_sHeader.sender_IP_address, arp->sender_IP_address, 4) == 0 &&
+	if (memcmp(m_ipAddr, arp->sender_IP_address, 4) == 0 &&
 		memcmp(arp->target_ethernet_address, "FF:FF:FF:FF:FF:FF", ETHER_ADDRESS_SIZE) == 0) {
 
 		// ARP 캐시 업데이트
@@ -95,7 +97,7 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 		return TRUE; // GARP 패킷 처리 완료
 	}
 
-	if (memcmp(m_sHeader.sender_IP_address, arp->target_IP_address, 4) == 0) {
+	if (memcmp(m_ipAddr, arp->target_IP_address, 4) == 0) {
 		if (ntohs(arp->op_Code) == 1) {
 			memcpy(m_replyHeader.target_IP_address, arp->sender_IP_address, IP_ADDRESS_SIZE);// 대상 ip주소 = 송신자의 ip주소
 			memcpy(m_replyHeader.target_ethernet_address, arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);// 대상 이더넷 주소 = 송신자의 이더넷 주소
@@ -113,8 +115,8 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 }
 
 void ArpLayer::Set_Sender_Address(unsigned char* MACAddr, unsigned char *IpAddress) {
-	memcpy(m_sHeader.sender_ethernet_address, MACAddr, 6);
-	memcpy(m_sHeader.sender_IP_address, IpAddress, 4);
+	Set_Ip_Address(IpAddress);
+	Set_Mac_Address(MACAddr);
 }
 
 void ArpLayer::SendGARP(const unsigned char* macAddr) {
@@ -130,4 +132,12 @@ void ArpLayer::SendGARP(const unsigned char* macAddr) {
 	mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
     // EthernetLayer를 통해 GARP 패킷 전송
     mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE,1);
+}
+
+
+void ArpLayer::Set_Mac_Address(unsigned char* MACAddr) {
+	memcpy(m_macAddr, MACAddr , 6);
+}
+void ArpLayer::Set_Ip_Address(unsigned char* IpAddr) {
+	memcpy(m_ipAddr, IpAddr, 4);
 }

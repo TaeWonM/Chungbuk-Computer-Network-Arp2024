@@ -19,6 +19,8 @@ class ArpLayer
 private:
 	inline void		ResetHeader();
 	CObject* mp_Dlg;
+	unsigned char m_ipAddr[4];
+	unsigned char m_macAddr[6];
 
 	struct ArpEntry {
 		unsigned char ip_address[4]; // IP аж╪р
@@ -33,6 +35,8 @@ public:
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* DstIpAddress, int nlength);
 	void			Set_Sender_Address(unsigned char* MACAddr, unsigned char* IpAddress);
+	void			Set_Mac_Address(unsigned char* MACAddr);
+	void			Set_Ip_Address(unsigned char* IpAddr);
 	ArpLayer(char* pName);
 	virtual ~ArpLayer();
 	void			SendGARP(const unsigned char* macAddr);
