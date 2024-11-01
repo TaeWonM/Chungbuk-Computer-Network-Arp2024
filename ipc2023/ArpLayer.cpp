@@ -109,6 +109,24 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 		memcpy(&payload[IP_ADDRESS_SIZE], arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
 		mp_aUpperLayer[0]->Receive(payload);
 	}
+	else if (is_IPAddress(arp->target_IP_address)) {
+		if (ntohs(arp->op_Code) == 1) {
+			// A reply
+			memcpy(m_replyHeader.target_IP_address, arp->sender_IP_address, IP_ADDRESS_SIZE);
+			memcpy(m_replyHeader.target_ethernet_address, arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
+			memcpy(m_replyHeader.sender_IP_address, arp->target_IP_address, IP_ADDRESS_SIZE);
+			memcpy(m_replyHeader.sender_ethernet_address, m_sHeader.sender_ethernet_address, ETHER_ADDRESS_SIZE);
+			mp_UnderLayer[0]->SetMacDstAddress(m_replyHeader.target_ethernet_address);
+			mp_UnderLayer[0]->Send((unsigned char*)&m_replyHeader, ARP_HEADER_SIZE, 1);
+			// B request
+			memcpy(m_sHeader.target_IP_address, arp->target_IP_address, IP_ADDRESS_SIZE);
+			memset(m_sHeader.target_ethernet_address, 255, ETHER_ADDRESS_SIZE);
+			memcpy(m_sHeader.sender_IP_address, arp->sender_IP_address, IP_ADDRESS_SIZE);
+			memcpy(m_sHeader.sender_ethernet_address, m_sHeader.sender_ethernet_address, ETHER_ADDRESS_SIZE);
+			mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
+			mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE, 1);
+		}
+	}
 	return FALSE;
 }
 
@@ -130,4 +148,8 @@ void ArpLayer::SendGARP(const unsigned char* macAddr) {
 	mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
     // EthernetLayer를 통해 GARP 패킷 전송
     mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE,1);
+}
+
+BOOL ArpLayer::is_IPAddress(unsigned char* DstIpAddress) {
+	return mp_aUpperLayer[0]->Search_Ip(DstIpAddress);
 }

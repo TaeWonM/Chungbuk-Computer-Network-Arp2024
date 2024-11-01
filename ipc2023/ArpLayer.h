@@ -36,6 +36,7 @@ public:
 	ArpLayer(char* pName);
 	virtual ~ArpLayer();
 	void			SendGARP(const unsigned char* macAddr);
+	BOOL			is_IPAddress(unsigned char* DstIpAddress);
 
 	typedef struct _ARP_HEADER {
 		unsigned short	hard_type; // total length of the data
