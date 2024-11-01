@@ -23,6 +23,7 @@ public:
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* DstIpAddress, int nlength);
 	void			Set_Sender_Address(unsigned char* MACAddr, unsigned char* IpAddress);
+	BOOL			is_in_pTable();
 	parpLayer(char* pName);
 	virtual ~parpLayer();
 
