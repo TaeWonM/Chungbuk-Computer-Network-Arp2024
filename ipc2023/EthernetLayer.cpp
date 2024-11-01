@@ -108,10 +108,9 @@ BOOL CEthernetLayer::Receive(unsigned char* ppayload)
 
 		if (ntohs(pFrame->enet_type) == 0x0806) { // arp Layer
 			bSuccess = mp_aUpperLayer[0]->Receive((unsigned char*)pFrame->enet_data);
-			bSuccess = mp_aUpperLayer[1]->Receive((unsigned char*)pFrame->enet_data);
 		}
 		else if (ntohs(pFrame->enet_type) == 0x2081) { 
-			bSuccess = mp_aUpperLayer[2]->Receive((unsigned char*)pFrame->enet_data);
+			bSuccess = mp_aUpperLayer[1]->Receive((unsigned char*)pFrame->enet_data);
 		}
 	}
 	///////////////////////////////////////////////////////////////////////

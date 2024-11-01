@@ -649,7 +649,7 @@ void Cipc2023Dlg::InitListControlSet()
 	float nColWidth[] = { 0, 0.2, 0.5, 0.3 };
 	for (int i = 0; i < 4; i++) {
 		m_ListControl.InsertColumn(i, column[i], LVCFMT_CENTER, int(cx * nColWidth[i]));
-	}
+	}	
 
 	m_ListControl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 }
