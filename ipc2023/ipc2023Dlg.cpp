@@ -152,6 +152,8 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &Cipc2023Dlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_ITEM_DELETE_BTN, &Cipc2023Dlg::OnBnClickedItemDeleteBtn)
 	ON_BN_CLICKED(IDC_ALL_DELETE_BTN, &Cipc2023Dlg::OnBnClickedAllDeleteBtn)
+	ON_EN_CHANGE(IDC_EDIT_GARP, &Cipc2023Dlg::OnEnChangeEditGarp)
+	ON_BN_CLICKED(IDC_GARP_BUTTON_SEND, &Cipc2023Dlg::OnBnClickedGarpButtonSend)
 END_MESSAGE_MAP()
 
 
@@ -416,11 +418,16 @@ void Cipc2023Dlg::SetDlgState(int state)
 		m_DstIp.EnableWindow(FALSE);
 		pitemDeleteButton->EnableWindow(FALSE);
 		pallDeleteButton->EnableWindow(FALSE);
-		/////////////////////////////
+		/////////////////////////////초기에 GARP관련 비활성 상태로 되게 설정
+		GetDlgItem(IDC_EDIT_GARP)->EnableWindow(FALSE);
+		GetDlgItem(IDC_GARP_BUTTON_SEND)->EnableWindow(FALSE);
+		////////////////////////////////////////
 		break;
 	case IPC_READYTOSEND: // 전송 준비 상태, 추가한 버튼 중 파일선택 버튼이랑 주소 입력칸만 활성화
 		pSendButton->EnableWindow(TRUE);
 		m_ListControl.EnableWindow(TRUE);
+		GetDlgItem(IDC_EDIT_GARP)->EnableWindow(TRUE);
+		GetDlgItem(IDC_GARP_BUTTON_SEND)->EnableWindow(TRUE);
 		break;
 	case IPC_WAITFORACK:	break; // 수신 대기 상태
 	case IPC_ERROR:		break; // 에러 상태
@@ -677,3 +684,34 @@ void Cipc2023Dlg::OnBnClickedAllDeleteBtn()
 
 
 
+
+
+void Cipc2023Dlg::OnEnChangeEditGarp()
+{
+	GetDlgItemText(IDC_EDIT_GARP, m_unSrcAddr);
+}
+
+
+void Cipc2023Dlg::OnBnClickedGarpButtonSend()
+{
+	unsigned char* macAddr = MacAddr2HexInt(m_unSrcAddr);
+
+	if (macAddr == nullptr) {
+		AfxMessageBox(_T("Invalid MAC address format."));
+		return;
+	}
+
+	// MAC 주소 복사 및 설정
+
+	m_EthernetLayer->SetSourceAddress(macAddr);  // 복사된 MAC 주소 전달
+
+	// GARP 전송
+	if (m_Arp != nullptr) {
+		m_Arp->SendGARP(macAddr);
+		AfxMessageBox(_T("GARP request sent successfully."));
+	}
+	else {
+		AfxMessageBox(_T("ArpLayer not initialized."));
+	}
+
+}

@@ -70,6 +70,7 @@ BOOL CNILayer::Receive()
 
 BOOL  CNILayer::send_packet(pcap_t* handle, u_char* message, int len) {
 	if (pcap_sendpacket(handle, message, len) != 0) {
+		AfxMessageBox(_T("Not Send"));
 		return false;
 	}
 	else return true;

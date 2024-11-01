@@ -112,6 +112,8 @@ public:
 	void SetComboboxlist();
 	// 콤보박스의 값을 처리하는 함수가 이동되서 추가된 함수
 	////////////////////////////////////
+private:
+	CString m_strMacAddr;
 public:
 
 	/*BOOL upperLayerKillTimer(int num);
@@ -127,4 +129,6 @@ public:
 	afx_msg void OnBnClickedProxyItemAddBtn();
 	afx_msg void OnIpnFieldchangedGarpAddress(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEditSrc3();
+	afx_msg void OnEnChangeEditGarp();
+	afx_msg void OnBnClickedGarpButtonSend();
 };
