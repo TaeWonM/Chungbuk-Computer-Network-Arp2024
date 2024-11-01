@@ -36,6 +36,8 @@ public:
 	virtual	BOOL	Receive(unsigned char* ppayload) { return FALSE; }
 	virtual	BOOL	Receive(CString IpAddr, CString MacAddr, BOOL is_in) { return FALSE; }
 	virtual BOOL	SetMacDstAddress(unsigned char* ppayload) { return mp_UnderLayer[0]->SetMacDstAddress(ppayload); }
+	virtual BOOL	UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr) { return mp_UnderLayer[0]->UpdateArpCahe(ipAddr, macAddr); }
+	virtual BOOL	SetMacSrcAddress(unsigned char* ppayload) { return mp_UnderLayer[0]->SetMacSrcAddress(ppayload); }
 protected:
 	char* m_pLayerName;
 	CBaseLayer* mp_UnderLayer[MAX_LAYER_NUMBER];							// UnderLayer pointer

@@ -133,3 +133,7 @@ BOOL CEthernetLayer::SetMacDstAddress(unsigned char* ppayload) {
 	memcpy(m_sHeader.enet_dstaddr, ppayload, ETHER_ADDRESS_SIZE);
 	return TRUE;
 }
+BOOL CEthernetLayer::SetMacSrcAddress(unsigned char* ppayload) {
+	memcpy(m_sHeader.enet_srcaddr, ppayload, ETHER_ADDRESS_SIZE);
+	return TRUE;
+}

@@ -26,6 +26,7 @@ public:
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* ppayload, int nlength);
 	void			RemoveItem(CString IpAddr, CString MacAddr);
+	BOOL			UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr);
 	ipLayer(char* pName);
 	virtual ~ipLayer();
 };

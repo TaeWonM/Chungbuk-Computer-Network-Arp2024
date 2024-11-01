@@ -95,7 +95,7 @@ public:
 	afx_msg void OnBnClickedButtonSend();
 	////////원본과 다름//////////
 	CString m_unSrcAddr;
-	CString m_unDstAddr;
+	CString m_unGarpAddr;
 	// 원본에서는 UINT 타입이었던 변수를 MFC에서 제공한느 문자열
 	// 클래스로 바꿈
 	/////////////////////////////
@@ -123,10 +123,13 @@ public:
 	afx_msg void OnBnClickedButton2();*/
 	void InitListControlSet();
 	void InitProxyListControlSet();
+	BOOL UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr);
 	afx_msg void OnBnClickedItemDeleteBtn();
 	afx_msg void OnBnClickedAllDeleteBtn();
 	afx_msg void OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedProxyDeleteBtn();
 	afx_msg void OnBnClickedProxyItemAddBtn();
+	afx_msg void OnEnChangeEditGarp();
+	afx_msg void OnBnClickedGarpButtonSend();
 };

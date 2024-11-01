@@ -21,14 +21,7 @@ private:
 	CObject* mp_Dlg;
 	unsigned char m_ipAddr[4];
 	unsigned char m_macAddr[6];
-
-	struct ArpEntry {
-		unsigned char ip_address[4]; // IP 林家
-		unsigned char mac_address[6]; // MAC 林家
-		time_t timestamp;
-	};
-
-	ArpEntry arp_cache[ARP_CACHE_SIZE];
+	unsigned char BroadingCastAddr[6];
 	int arp_cache_count;
 
 public:
@@ -55,7 +48,6 @@ public:
 	} ARP_HEADER, * P_ARP_HEADER;
 	CString Msg;
 
-	void UpdateCacheTable(unsigned char* ipAddress, unsigned char* macAddress);
 
 protected:
 	ARP_HEADER		m_sHeader;

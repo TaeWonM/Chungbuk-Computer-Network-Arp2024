@@ -74,3 +74,14 @@ void ipLayer::RemoveItem(CString IpAddr, CString MacAddr) {
 		m_IpMap.erase(m_IpMap.find(IpAddr));
 	}
 }
+
+BOOL ipLayer::UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr) {
+	CString DstIpAddrStr, DstMacAddrStr;
+	DstIpAddrStr.Format(_T("%d.%d.%d.%d"), ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
+	DstMacAddrStr.Format(_T("%02x:%02x:%02x:%02x:%02x:%02x"), macAddr[0], macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5]);
+	if (!m_IpMap.empty() && m_IpMap.find(DstIpAddrStr) != m_IpMap.end()) {
+		m_IpMap[DstIpAddrStr] = DstMacAddrStr;
+		return mp_aUpperLayer[0]->UpdateArpCahe(ipAddr, macAddr);
+	}
+	return FALSE;
+}
