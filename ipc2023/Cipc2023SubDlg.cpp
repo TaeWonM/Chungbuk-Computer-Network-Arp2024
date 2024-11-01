@@ -164,6 +164,7 @@ void Cipc2023SubDlg::OnOK()
 	parent->m_ProxyListControl.SetItemText(ItemIndex, PROXY_LIST_CONTROLL_DEVICE_ID, deviceID);
 	parent->m_ProxyListControl.SetItemText(ItemIndex, PROXY_LIST_CONTROLL_IP_ADDRESS, unDstIpAddrStr);
 	parent->m_ProxyListControl.SetItemText(ItemIndex, PROXY_LIST_CONTROLL_MAC_ADDRESS, MacAddr);
+	parent->m_Ip->AddProxyItem(unDstIpAddrStr, MacAddr);
 	CDialogEx::OnOK();
 	PostNcDestroy();
 }

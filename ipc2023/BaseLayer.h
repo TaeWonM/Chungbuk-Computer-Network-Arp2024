@@ -34,6 +34,7 @@ public:
 	virtual	BOOL	Send(unsigned char*, int, int) { return FALSE; }
 	// param : unsigned char*	- the data of the underlayer
 	virtual	BOOL	Receive(unsigned char* ppayload) { return FALSE; }
+	virtual	BOOL	Receive(unsigned char* ppayload, BOOL is_in) { return FALSE; }
 	virtual	BOOL	Receive(CString IpAddr, CString MacAddr, BOOL is_in) { return FALSE; }
 	virtual BOOL	SetMacDstAddress(unsigned char* ppayload) { return mp_UnderLayer[0]->SetMacDstAddress(ppayload); }
 	virtual BOOL	UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr) { return mp_UnderLayer[0]->UpdateArpCahe(ipAddr, macAddr); }

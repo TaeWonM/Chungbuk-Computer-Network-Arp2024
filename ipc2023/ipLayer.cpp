@@ -54,7 +54,7 @@ BOOL ipLayer::Send(unsigned char* ppayload, int nlength)
 }
 // 가장 아래 계층인 File 계층의 Send 함수 입니다. IpcBuff.txt라는 파일을 만들어서 적습니다
 
-BOOL ipLayer::Receive(unsigned char* ppayload)
+BOOL ipLayer::Receive(unsigned char* ppayload, BOOL is_in)
 {
 	unsigned char DstIpAddr[4];
 	unsigned char DstMacAddr[6];
@@ -63,8 +63,18 @@ BOOL ipLayer::Receive(unsigned char* ppayload)
 	CString DstIpAddrStr, DstMacAddrStr;
 	DstIpAddrStr.Format(_T("%d.%d.%d.%d"), DstIpAddr[0], DstIpAddr[1], DstIpAddr[2], DstIpAddr[3]);
 	DstMacAddrStr.Format(_T("%02x:%02x:%02x:%02x:%02x:%02x"), DstMacAddr[0], DstMacAddr[1], DstMacAddr[2], DstMacAddr[3], DstMacAddr[4], DstMacAddr[5]);
-	if (!m_IpMap.empty() && m_IpMap.find(DstIpAddrStr) != m_IpMap.end()) return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, TRUE);
-	return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, FALSE);
+	if (!is_in) {
+		AfxMessageBox(_T(DstIpAddrStr));
+		if (!m_ProxyMap.empty() && m_ProxyMap.find(DstIpAddrStr) != m_ProxyMap.end()) {
+			//TODO : Proxymessage
+			return TRUE;
+		}
+		else return FALSE;
+	}
+	else {
+		if (!m_IpMap.empty() && m_IpMap.find(DstIpAddrStr) != m_IpMap.end()) return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, TRUE);
+		return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, FALSE);
+	}
 }
 
 void ipLayer::RemoveItem(CString IpAddr, CString MacAddr) {
@@ -84,4 +94,12 @@ BOOL ipLayer::UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr) {
 		return mp_aUpperLayer[0]->UpdateArpCahe(ipAddr, macAddr);
 	}
 	return FALSE;
+}
+
+void ipLayer::AddProxyItem(CString IpAddr, CString MacAddr) {
+	m_ProxyMap.insert({ IpAddr , MacAddr });
+}
+
+void ipLayer::DeleteProxyItem(CString IpAddr, CString MacAddr) {
+	m_ProxyMap.erase(IpAddr);
 }

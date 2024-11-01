@@ -68,7 +68,7 @@ BOOL ArpLayer::Send(unsigned char* DstIpAddress, int nlength)
 
 
 BOOL ArpLayer::Receive(unsigned char* ppayload) {
-
+	BOOL is_in = FALSE;
 	P_ARP_HEADER arp = (P_ARP_HEADER)ppayload;
 	// GARP 패킷인지 확인: 송신자의 IP 주소 = IP 주소, 대상 MAC 주소 = 브로드캐스트 주소인지 확인
 	if (memcmp(arp->target_IP_address, arp->sender_IP_address, 4) == 0) {
@@ -88,10 +88,26 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 			mp_UnderLayer[0]->SetMacDstAddress(m_replyHeader.target_ethernet_address);
 			mp_UnderLayer[0]->Send((unsigned char*)&m_replyHeader, ARP_HEADER_SIZE, 1);
 		}
-		unsigned char* payload = (unsigned char*)malloc(sizeof(unsigned char) * (IP_ADDRESS_SIZE + ETHER_ADDRESS_SIZE));
+		is_in = TRUE;
+	}
+	unsigned char* payload;
+	if (is_in) {
+		payload = (unsigned char*)malloc(sizeof(unsigned char) * (IP_ADDRESS_SIZE + ETHER_ADDRESS_SIZE));
 		memcpy(payload, arp->sender_IP_address, IP_ADDRESS_SIZE);
 		memcpy(&payload[IP_ADDRESS_SIZE], arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);
-		mp_aUpperLayer[0]->Receive(payload);
+	}
+	else {
+		payload = (unsigned char*)malloc(sizeof(unsigned char) * (IP_ADDRESS_SIZE + ETHER_ADDRESS_SIZE));
+		memcpy(payload, arp->target_IP_address, IP_ADDRESS_SIZE);
+		memcpy(&payload[IP_ADDRESS_SIZE], arp->target_ethernet_address, ETHER_ADDRESS_SIZE);
+	}
+	if (mp_aUpperLayer[0]->Receive(payload, is_in) && !is_in) {
+		memcpy(m_replyHeader.target_IP_address, arp->sender_IP_address, IP_ADDRESS_SIZE);// 대상 ip주소 = 송신자의 ip주소
+		memcpy(m_replyHeader.target_ethernet_address, arp->sender_ethernet_address, ETHER_ADDRESS_SIZE);// 대상 이더넷 주소 = 송신자의 이더넷 주소
+		memcpy(m_replyHeader.sender_IP_address, arp->target_IP_address, IP_ADDRESS_SIZE);// 송신 ip 주소 = 자신의 ip주소
+		memcpy(m_replyHeader.sender_ethernet_address, m_macAddr, ETHER_ADDRESS_SIZE); // 송신 이더넷 주소 = 자신의 이더넷 주소
+		mp_UnderLayer[0]->SetMacDstAddress(m_replyHeader.target_ethernet_address);
+		mp_UnderLayer[0]->Send((unsigned char*)&m_replyHeader, ARP_HEADER_SIZE, 1);
 	}
 	return FALSE;
 }

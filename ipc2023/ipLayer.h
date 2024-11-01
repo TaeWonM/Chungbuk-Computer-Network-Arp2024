@@ -23,10 +23,13 @@ private:
 public:
 	//BOOL			sendAck(unsigned char* ppayload);
 	std::map<CString,CString> m_IpMap;
-	BOOL			Receive(unsigned char* ppayload);
+	std::map<CString, CString> m_ProxyMap;
+	BOOL			Receive(unsigned char* ppayload, BOOL is_in);
 	BOOL			Send(unsigned char* ppayload, int nlength);
 	void			RemoveItem(CString IpAddr, CString MacAddr);
 	BOOL			UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr);
+	void			AddProxyItem(CString IpAddr, CString MacAddr);
+	void			DeleteProxyItem(CString IpAddr, CString MacAddr);
 	ipLayer(char* pName);
 	virtual ~ipLayer();
 };
