@@ -13,8 +13,10 @@
 #define IDC_SRC_IP                      1000
 #define IDC_EDIT1                       1001
 #define IDC_EDIT_SRC                    1001
+#define IDC_PROXT_SRC_EDIT              1001
 #define IDC_EDIT2                       1002
 #define IDC_EDIT_DST                    1002
+#define IDC_PROXY_EDIT                  1002
 #define IDC_EDIT3                       1003
 #define IDC_EDIT_MSG                    1003
 #define IDC_EDIT_GARP                   1003
@@ -37,21 +39,17 @@
 #define IDC_PROGRESS1                   1013
 #define IDC_DST_IP                      1014
 #define IDC_LIST2                       1015
-<<<<<<< HEAD
 #define IDC_LIST_PROXY                  1015
 #define IDC_LIST3                       1016
 #define IDC_ITEM_DELETE_BTN             1017
+#define IDC_PROXY_COMBO                 1017
 #define IDC_ALL_DELETE_BTN              1018
-#define IDC_PROXY_DELETE_BTN            1021
-#define IDC_PROXY_ITEM_ADD_BTN          1023
-=======
-#define IDC_LIST3                       1016
-#define IDC_ITEM_DELETE_BTN             1017
-#define IDC_ALL_DELETE_BTN              1018
+#define IDC_PROXY_DST_IP                1018
 #define IDC_ALL_DELETE_BTN2             1019
 #define IDC_ITEM_DELETE_BTN2            1020
+#define IDC_PROXY_DELETE_BTN            1021
 #define IDC_ALL_DELETE_BTN3             1021
->>>>>>> sanghyun_branch
+#define IDC_PROXY_ITEM_ADD_BTN          1023
 
 // Next default values for new objects
 // 
@@ -59,7 +57,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1017
+#define _APS_NEXT_CONTROL_VALUE         1019
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

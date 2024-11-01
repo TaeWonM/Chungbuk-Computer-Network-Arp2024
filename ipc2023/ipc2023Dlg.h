@@ -8,12 +8,15 @@
 #include "ipLayer.h"	// Added by ClassView
 #include "EthernetLayer.h"	// Added by ClassView
 #include "CNILayer.h"	// Added by ClassView
+#include "Cipc2023SubDlg.h"
 #include <pcap.h>
 #include<WinSock2.h>
 #pragma comment(lib, "ws2_32.lib")
 #include <Packet32.h>
 #pragma comment(lib, "packet.lib")
 // Cipc2023Dlg 대화 상자
+class Cipc2023SubDlg;
+
 class Cipc2023Dlg : public CDialogEx, public CBaseLayer
 {
 	// 생성입니다.
@@ -74,20 +77,20 @@ private:
 
 	void			SetDlgState(int state);
 	inline void		EndofProcess();
-	unsigned char* MacAddr2HexInt(CString Mac_address);
-	unsigned char* IpAddr2HexInt(CString Ip_address);
 	BOOL			m_bSendReady;
 	UINT_PTR		TimerHandler;
 
+	// Implementation
+	UINT			m_wParam;
+	DWORD			m_lParam;
+public:
 	// Object App
 	ipLayer* m_Ip;
 	CEthernetLayer* m_EthernetLayer;
 	CNILayer* m_NILayer;
 	ArpLayer* m_Arp;	// 추가함
-	// Implementation
-	UINT			m_wParam;
-	DWORD			m_lParam;
-public:
+	unsigned char* MacAddr2HexInt(CString Mac_address);
+	unsigned char* IpAddr2HexInt(CString Ip_address);
 	afx_msg void OnBnClickedButtonAddr();
 	afx_msg void OnBnClickedButtonSend();
 	////////원본과 다름//////////
@@ -99,8 +102,10 @@ public:
 	CString m_stMessage;
 	CComboBox m_Combobox;
 	CListCtrl m_ListControl;
+	CListCtrl m_ProxyListControl;
 	CIPAddressCtrl m_SrcIp;
 	CIPAddressCtrl m_DstIp;
+	Cipc2023SubDlg * ProxyDlg;
 	int timerIndex[10];
 	int timerMaxIndex = 0;
 	afx_msg void OnCbnSelchangeCombo1();
@@ -117,15 +122,11 @@ public:
 	BOOL upperLayerSetTimer(int num);
 	afx_msg void OnBnClickedButton2();*/
 	void InitListControlSet();
+	void InitProxyListControlSet();
 	afx_msg void OnBnClickedItemDeleteBtn();
 	afx_msg void OnBnClickedAllDeleteBtn();
 	afx_msg void OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedProxyDeleteBtn();
-	afx_msg void OnBnClickedItemDeleteBtn2();
 	afx_msg void OnBnClickedProxyItemAddBtn();
-	afx_msg void OnIpnFieldchangedGarpAddress(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEnChangeEditSrc3();
-	afx_msg void OnEnChangeEditGarp();
-	afx_msg void OnBnClickedGarpButtonSend();
 };

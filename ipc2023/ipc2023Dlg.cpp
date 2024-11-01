@@ -7,6 +7,7 @@
 #include "framework.h"
 #include "ipc2023.h"
 #include "ipc2023Dlg.h"
+#include "Cipc2023SubDlg.h"
 #include "afxdialogex.h"
 #include <tchar.h>
 ////////////////OCT.11added///////////
@@ -89,7 +90,7 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	, m_stMessage(_T(""))
 	//메세지 문자열을 빈문자열로 초기화
 {
-
+	ProxyDlg = NULL;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	//Protocol Layer Setting
@@ -126,6 +127,7 @@ void Cipc2023Dlg::DoDataExchange(CDataExchange* pDX)
 	////////////////////새로 추가/////////////////
 	DDX_Control(pDX, IDC_COMBO1, m_Combobox);
 	DDX_Control(pDX, IDC_LIST2, m_ListControl);
+	DDX_Control(pDX, IDC_LIST3, m_ProxyListControl);
 	DDX_Control(pDX, IDC_DST_IP, m_DstIp);
 	DDX_Control(pDX, IDC_SRC_IP, m_SrcIp);
 	// 현재 장치의 네트워크 장치를 보여줄 콤보박스 추가함
@@ -150,11 +152,10 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &Cipc2023Dlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_ITEM_DELETE_BTN, &Cipc2023Dlg::OnBnClickedItemDeleteBtn)
 	ON_BN_CLICKED(IDC_ALL_DELETE_BTN, &Cipc2023Dlg::OnBnClickedAllDeleteBtn)
-	ON_EN_CHANGE(IDC_EDIT_GARP, &Cipc2023Dlg::OnEnChangeEditGarp)
-	ON_BN_CLICKED(IDC_GARP_BUTTON_SEND, &Cipc2023Dlg::OnBnClickedGarpButtonSend)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, &Cipc2023Dlg::OnLvnItemchangedList2)
 	ON_NOTIFY(IPN_FIELDCHANGED, IDC_DST_IP, &Cipc2023Dlg::OnIpnFieldchangedDstIp)
-	//ON_NOTIFY(IPN_FIELDCHANGED, IDC_SRC_IP, &Cipc2023Dlg::OnIpnFieldchangedSrcIp)
+	ON_BN_CLICKED(IDC_PROXY_ITEM_ADD_BTN, &Cipc2023Dlg::OnBnClickedProxyItemAddBtn)
+	ON_BN_CLICKED(IDC_PROXY_DELETE_BTN, &Cipc2023Dlg::OnBnClickedProxyDeleteBtn)
 END_MESSAGE_MAP()
 
 
@@ -201,6 +202,7 @@ BOOL Cipc2023Dlg::OnInitDialog()
 	m_EthernetLayer->SetBroadcasting_address();
 	SetComboboxlist();
 	InitListControlSet();
+	InitProxyListControlSet();
 	memset(timerIndex, -1, 4 * 10);
 	//원래는 여기서 송수신 주소 처리했는데 NI레이어로 함수 이동하고 여기서는 전달만 해줌
 	/////////////////////////////////////////////////////////////////////////
@@ -657,6 +659,20 @@ void Cipc2023Dlg::InitListControlSet()
 	m_ListControl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 }
 
+void Cipc2023Dlg::InitProxyListControlSet()
+{
+	CRect r;
+	::GetClientRect(m_ProxyListControl.m_hWnd, r);
+	int cx = r.right - r.left;
+	CString column[] = { "", "Device ID", "IP Address", "Ethernet Address" };
+	float nColWidth[] = { 0, 0.2, 0.5, 0.3 };
+	for (int i = 0; i < 4; i++) {
+		m_ProxyListControl.InsertColumn(i, column[i], LVCFMT_CENTER, int(cx * nColWidth[i]));
+	}
+
+	m_ProxyListControl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
+}
+
 
 void Cipc2023Dlg::OnBnClickedItemDeleteBtn()
 {
@@ -694,13 +710,21 @@ void Cipc2023Dlg::OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-
-<<<<<<< HEAD
-}
-=======
 //void Cipc2023Dlg::OnIpnFieldchangedSrcIp(NMHDR* pNMHDR, LRESULT* pResult)
 //{
 //	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
 //	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 //	*pResult = 0;
 //}
+void Cipc2023Dlg::OnBnClickedProxyItemAddBtn() {
+	if (ProxyDlg == NULL) {
+		ProxyDlg = new Cipc2023SubDlg(this);
+		ProxyDlg->setter(this);
+		ProxyDlg->Create(IDD_DIALOG1, this);
+		ProxyDlg->ShowWindow(SW_SHOW);
+	}
+}
+
+void Cipc2023Dlg::OnBnClickedProxyDeleteBtn() {
+
+}
