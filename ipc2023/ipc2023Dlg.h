@@ -1,5 +1,4 @@
-﻿
-// ipc2023Dlg.h: 헤더 파일
+﻿// ipc2023Dlg.h: 헤더 파일
 //
 
 #pragma once
@@ -17,25 +16,25 @@
 // Cipc2023Dlg 대화 상자
 class Cipc2023Dlg : public CDialogEx, public CBaseLayer
 {
-// 생성입니다.
+	// 생성입니다.
 public:
 	Cipc2023Dlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
 
 
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_IPC2023_DIALOG };
 #endif
 
-	public:
+public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
-	
-// 구현입니다.
+
+	// 구현입니다.
 protected:
 	HICON m_hIcon;
 
@@ -46,11 +45,11 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-//	UINT m_unDstAddr;
-//	UINT unSrcAddr;
-//	CString m_stMessage;
-//	CListBox m_ListChat;
-	
+	//	UINT m_unDstAddr;
+	//	UINT unSrcAddr;
+	//	CString m_stMessage;
+	//	CListBox m_ListChat;
+
 	afx_msg void Cipc2023Dlg::OnTimer(UINT nIDEvent);
 
 
@@ -75,8 +74,8 @@ private:
 
 	void			SetDlgState(int state);
 	inline void		EndofProcess();
-	unsigned char*  MacAddr2HexInt(CString Mac_address);
-	unsigned char*	IpAddr2HexInt(CString Ip_address);
+	unsigned char* MacAddr2HexInt(CString Mac_address);
+	unsigned char* IpAddr2HexInt(CString Ip_address);
 	BOOL			m_bSendReady;
 	UINT_PTR		TimerHandler;
 

@@ -31,19 +31,19 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();	// cAboutDlg의 접근 수준은 public으로 외부접근 가능
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원하여 데이터의 전송 및 검증에 이용
 	// MFC에서의 데이터 바인딩 수행
 
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()	// 메세지 맵을 이용해 MFC 상의 UI에서 사용자가 버튼클릭이나 값 입력 등 
-                              // 사용자 이용에 대한 응답을 정의한다.
+		// 사용자 이용에 대한 응답을 정의한다.
 public:
 
 };
@@ -59,7 +59,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-// 사용자가 원하는 기능의 메세지 처리기 추가 가능 -> 새로운 입력 칸, 버튼...
+	// 사용자가 원하는 기능의 메세지 처리기 추가 가능 -> 새로운 입력 칸, 버튼...
 
 END_MESSAGE_MAP()
 // 메세제 맵의 시작과 끝
@@ -76,7 +76,7 @@ Cipc2023Dlg::Cipc2023Dlg(CWnd* pParent /*=nullptr*/)
 	// CBaseLayer 의 생성자 호출 후 ChatDlg라는 이름으로 초기화
 	, m_bSendReady(FALSE)
 	// 전송 준비 상태 표현 변수를 bool값 FALSE로 초기화
-	, m_nAckReady( -1 )
+	, m_nAckReady(-1)
 	// ACK 준비 상태 표현 변수를 -1로 초기화
 
 	/////////////////원본과 차이 있음//////////////////
@@ -144,7 +144,7 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	// 메세지 전송 버튼 클릭 처리기 등록
 	ON_WM_TIMER() // 메세지 타이머 처리기 등록
 
-	
+
 	//////////////새로 추가된 부분////////////////////////////////////////
 	// 소스 주소 변경 시 처리기 등록
 	ON_CBN_SELCHANGE(IDC_COMBO1, &Cipc2023Dlg::OnCbnSelchangeCombo1)
@@ -152,7 +152,7 @@ BEGIN_MESSAGE_MAP(Cipc2023Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_ALL_DELETE_BTN, &Cipc2023Dlg::OnBnClickedAllDeleteBtn)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, &Cipc2023Dlg::OnLvnItemchangedList2)
 	ON_NOTIFY(IPN_FIELDCHANGED, IDC_DST_IP, &Cipc2023Dlg::OnIpnFieldchangedDstIp)
-	ON_NOTIFY(IPN_FIELDCHANGED, IDC_SRC_IP, &Cipc2023Dlg::OnIpnFieldchangedSrcIp)
+	//ON_NOTIFY(IPN_FIELDCHANGED, IDC_SRC_IP, &Cipc2023Dlg::OnIpnFieldchangedSrcIp)
 END_MESSAGE_MAP()
 
 
@@ -191,7 +191,7 @@ BOOL Cipc2023Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	SetDlgState(IPC_INITIALIZING); 
+	SetDlgState(IPC_INITIALIZING);
 	// 대화 상자의 초기상태를 TNITIALIZING으로 초기화
 
 	/////////오늘 추가된 부분//////////////////////
@@ -381,7 +381,7 @@ BOOL Cipc2023Dlg::PreTranslateMessage(MSG* pMsg)
 		{
 		case VK_RETURN:
 			if (::GetDlgCtrlID(::GetFocus()) == IDC_EDIT3)
-				OnBnClickedButtonSend();	
+				OnBnClickedButtonSend();
 			// 현재 포커스가 IDC_EDIT3 인지 확인하고 맞다면, Send버튼 처리 함수인 OnBnClickedButtonSend() 호출
 			return FALSE;
 		case VK_ESCAPE: return FALSE;
@@ -440,7 +440,7 @@ void Cipc2023Dlg::SetDlgState(int state)
 		m_SrcIp.EnableWindow(FALSE);
 		/////////////////////////////////////////////
 		// NI레이어의 Set_is_set true 로 설정 (추가됨)
-		if(!m_NILayer->Receive()) SetDlgState(IPC_ADDR_RESET);
+		if (!m_NILayer->Receive()) SetDlgState(IPC_ADDR_RESET);
 		// NI레이어의 receive가 false인 경우 SetDlgState(IPC_ADDR_RESET)을 진행
 		// 여기서 삭제 버튼 활성화, 상대 주소 입력되게 하기
 		m_DstIp.EnableWindow(TRUE);
@@ -511,7 +511,7 @@ void Cipc2023Dlg::OnBnClickedButtonAddr()
 
 		return;
 	}
-		// 전송 준비 확인
+	// 전송 준비 확인
 	if (m_bSendReady) {
 		SetDlgState(IPC_ADDR_RESET);
 		SetDlgState(IPC_INITIALIZING);
@@ -564,7 +564,7 @@ void Cipc2023Dlg::OnCbnSelchangeCombo1()
 	OidData->Oid = OID_802_3_CURRENT_ADDRESS;	// OID 설정
 	OidData->Length = 6;	// OID 크기 길이 설정
 
-	
+
 	int i = 0;
 	int indexnum = m_Combobox.GetCurSel();	// 콤보 박스에서 선택한 네트워크 장치의 인덱스 가져오기
 	//오늘 변경된 부분///////////////////////////////////////////////////////
@@ -646,7 +646,7 @@ void Cipc2023Dlg::InitListControlSet()
 	CRect r;
 	::GetClientRect(m_ListControl.m_hWnd, r);
 	int cx = r.right - r.left;
-	CString column[] = {"", "IP Address", "Ethernet Address", "Status" };
+	CString column[] = { "", "IP Address", "Ethernet Address", "Status" };
 	float nColWidth[] = { 0, 0.2, 0.5, 0.3 };
 	for (int i = 0; i < 4; i++) {
 		m_ListControl.InsertColumn(i, column[i], LVCFMT_CENTER, int(cx * nColWidth[i]));
@@ -661,7 +661,7 @@ void Cipc2023Dlg::OnBnClickedItemDeleteBtn()
 	int nmark = m_ListControl.GetSelectionMark();
 	if (nmark != -1) {
 		m_ListControl.DeleteItem(nmark);
-		for (int i = nmark+1; i < timerMaxIndex; i++) {
+		for (int i = nmark + 1; i < timerMaxIndex; i++) {
 			timerIndex[i]--;
 		}
 	}
@@ -693,9 +693,9 @@ void Cipc2023Dlg::OnIpnFieldchangedDstIp(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 
-void Cipc2023Dlg::OnIpnFieldchangedSrcIp(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	*pResult = 0;
-}
+//void Cipc2023Dlg::OnIpnFieldchangedSrcIp(NMHDR* pNMHDR, LRESULT* pResult)
+//{
+//	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
+//	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+//	*pResult = 0;
+//}
