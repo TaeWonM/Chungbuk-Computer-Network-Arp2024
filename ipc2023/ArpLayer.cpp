@@ -74,7 +74,7 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 	if (memcmp(arp->target_IP_address, arp->sender_IP_address, 4) == 0) {
 
 		// ARP 캐시 업데이트
-		mp_aUpperLayer[0]->UpdateArpCahe(arp->target_IP_address, arp->sender_ethernet_address);
+		mp_aUpperLayer[0]->UpdateArpCahe(arp->sender_IP_address, arp->sender_ethernet_address);
 
 		return TRUE; // GARP 패킷 처리 완료
 	}
@@ -123,7 +123,7 @@ void ArpLayer::SendGARP(const unsigned char* macAddr) {
 	
 	mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
     // 자신의 IP를 대상 IP로 설정하여 GARP 생성
-    memcpy(m_sHeader.target_IP_address, m_sHeader.sender_IP_address, IP_ADDRESS_SIZE); // 자신의 IP로 설정
+    memcpy(m_sHeader.target_IP_address, m_ipAddr, IP_ADDRESS_SIZE); // 자신의 IP로 설정
 
     // 전달받은 MAC 주소를 ARP 헤더의 송신 MAC 주소로 설정
     memcpy(m_sHeader.sender_ethernet_address, macAddr, ETHER_ADDRESS_SIZE); // ARP 헤더의 송신 MAC 주소 설정

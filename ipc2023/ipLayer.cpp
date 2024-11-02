@@ -64,7 +64,6 @@ BOOL ipLayer::Receive(unsigned char* ppayload, BOOL is_in)
 	DstIpAddrStr.Format(_T("%d.%d.%d.%d"), DstIpAddr[0], DstIpAddr[1], DstIpAddr[2], DstIpAddr[3]);
 	DstMacAddrStr.Format(_T("%02x:%02x:%02x:%02x:%02x:%02x"), DstMacAddr[0], DstMacAddr[1], DstMacAddr[2], DstMacAddr[3], DstMacAddr[4], DstMacAddr[5]);
 	if (!is_in) {
-		AfxMessageBox(_T(DstIpAddrStr));
 		if (!m_ProxyMap.empty() && m_ProxyMap.find(DstIpAddrStr) != m_ProxyMap.end()) {
 			//TODO : Proxymessage
 			return TRUE;
@@ -72,7 +71,11 @@ BOOL ipLayer::Receive(unsigned char* ppayload, BOOL is_in)
 		else return FALSE;
 	}
 	else {
-		if (!m_IpMap.empty() && m_IpMap.find(DstIpAddrStr) != m_IpMap.end()) return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, TRUE);
+		if (!m_IpMap.empty() && m_IpMap.find(DstIpAddrStr) != m_IpMap.end()) {
+			m_IpMap[DstIpAddrStr] = DstMacAddrStr;
+			return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, TRUE);
+		}
+		m_IpMap.insert({ DstIpAddrStr , DstMacAddrStr });
 		return mp_aUpperLayer[0]->Receive(DstIpAddrStr, DstMacAddrStr, FALSE);
 	}
 }
