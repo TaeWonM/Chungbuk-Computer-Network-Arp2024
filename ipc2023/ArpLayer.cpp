@@ -72,7 +72,20 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 	P_ARP_HEADER arp = (P_ARP_HEADER)ppayload;
 	// GARP 패킷인지 확인: 송신자의 IP 주소 = IP 주소, 대상 MAC 주소 = 브로드캐스트 주소인지 확인
 	if (memcmp(arp->target_IP_address, arp->sender_IP_address, 4) == 0) {
-
+		if (memcmp(arp->target_IP_address, m_ipAddr, 4)) {
+			if (ntohs(arp->op_Code) == 1) {
+				memcpy(m_replyHeader.target_IP_address, m_ipAddr, IP_ADDRESS_SIZE);// 대상 ip주소 = 송신자의 ip주소
+				memcpy(m_replyHeader.target_ethernet_address, BroadingCastAddr, ETHER_ADDRESS_SIZE);// 대상 이더넷 주소 = 송신자의 이더넷 주소
+				memcpy(m_replyHeader.sender_IP_address, m_ipAddr, IP_ADDRESS_SIZE);// 송신 ip 주소 = 자신의 ip주소
+				memcpy(m_replyHeader.sender_ethernet_address, m_macAddr, ETHER_ADDRESS_SIZE); // 송신 이더넷 주소 = 자신의 이더넷 주소
+				mp_UnderLayer[0]->SetMacDstAddress(m_replyHeader.target_ethernet_address);
+				mp_UnderLayer[0]->Send((unsigned char*)&m_replyHeader, ARP_HEADER_SIZE, 1);
+			}
+			else {
+				AfxMessageBox(_T("Duplicated GARP!!"));
+			}
+			return TRUE;
+		}
 		// ARP 캐시 업데이트
 		mp_aUpperLayer[0]->UpdateArpCahe(arp->sender_IP_address, arp->sender_ethernet_address);
 

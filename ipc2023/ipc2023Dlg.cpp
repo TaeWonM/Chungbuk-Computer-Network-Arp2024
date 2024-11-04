@@ -684,7 +684,11 @@ void Cipc2023Dlg::OnBnClickedItemDeleteBtn()
 {
 	int nmark = m_ListControl.GetSelectionMark();
 	if (nmark != -1) {
+		CString temp_ip;
+		temp_ip = m_ListControl.GetItemText(nmark, LIST_CONTROLL_IP_COLUMN);
+		m_Ip->DeleteItem(temp_ip);
 		m_ListControl.DeleteItem(nmark);
+
 		for (int i = nmark + 1; i < timerMaxIndex; i++) {
 			timerIndex[i]--;
 		}
@@ -732,7 +736,13 @@ void Cipc2023Dlg::OnBnClickedProxyItemAddBtn() {
 }
 
 void Cipc2023Dlg::OnBnClickedProxyDeleteBtn() {
-
+	int nmark = m_ProxyListControl.GetSelectionMark();
+	if (nmark != -1) {
+		m_ProxyListControl.DeleteItem(nmark);
+		CString temp_ip;
+		temp_ip = m_ProxyListControl.GetItemText(1, 2);
+		m_Ip->DeleteProxyItem(temp_ip);
+	}
 }
 
 BOOL Cipc2023Dlg::UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr) {

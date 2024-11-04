@@ -29,7 +29,8 @@ public:
 	void			RemoveItem(CString IpAddr, CString MacAddr);
 	BOOL			UpdateArpCahe(unsigned char* ipAddr, unsigned char* macAddr);
 	void			AddProxyItem(CString IpAddr, CString MacAddr);
-	void			DeleteProxyItem(CString IpAddr, CString MacAddr);
+	void			DeleteProxyItem(CString IpAddr);
+	void			DeleteItem(CString IpAddr);
 	ipLayer(char* pName);
 	virtual ~ipLayer();
 };

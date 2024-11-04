@@ -103,6 +103,10 @@ void ipLayer::AddProxyItem(CString IpAddr, CString MacAddr) {
 	m_ProxyMap.insert({ IpAddr , MacAddr });
 }
 
-void ipLayer::DeleteProxyItem(CString IpAddr, CString MacAddr) {
+void ipLayer::DeleteProxyItem(CString IpAddr) {
 	m_ProxyMap.erase(IpAddr);
+}
+
+void ipLayer::DeleteItem(CString IpAddr) {
+	m_IpMap.erase(IpAddr);
 }
