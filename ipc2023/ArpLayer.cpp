@@ -72,7 +72,7 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 	P_ARP_HEADER arp = (P_ARP_HEADER)ppayload;
 	// GARP 패킷인지 확인: 송신자의 IP 주소 = IP 주소, 대상 MAC 주소 = 브로드캐스트 주소인지 확인
 	if (memcmp(arp->target_IP_address, arp->sender_IP_address, 4) == 0) {
-		if (memcmp(arp->target_IP_address, m_ipAddr, 4)) {
+		if (memcmp(arp->target_IP_address, m_ipAddr, 4) == 0) {
 			if (ntohs(arp->op_Code) == 1) {
 				memcpy(m_replyHeader.target_IP_address, m_ipAddr, IP_ADDRESS_SIZE);// 대상 ip주소 = 송신자의 ip주소
 				memcpy(m_replyHeader.target_ethernet_address, BroadingCastAddr, ETHER_ADDRESS_SIZE);// 대상 이더넷 주소 = 송신자의 이더넷 주소
@@ -137,6 +137,7 @@ void ArpLayer::SendGARP(const unsigned char* macAddr) {
 	mp_UnderLayer[0]->SetMacDstAddress(m_sHeader.target_ethernet_address);
     // 자신의 IP를 대상 IP로 설정하여 GARP 생성
     memcpy(m_sHeader.target_IP_address, m_ipAddr, IP_ADDRESS_SIZE); // 자신의 IP로 설정
+	memcpy(m_sHeader.sender_IP_address, m_ipAddr, IP_ADDRESS_SIZE); // 자신의 IP로 설정
 
     // 전달받은 MAC 주소를 ARP 헤더의 송신 MAC 주소로 설정
     memcpy(m_sHeader.sender_ethernet_address, macAddr, ETHER_ADDRESS_SIZE); // ARP 헤더의 송신 MAC 주소 설정
