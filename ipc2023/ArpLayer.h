@@ -20,11 +20,11 @@ private:
 	inline void		ResetHeader();
 	CObject* mp_Dlg;
 	unsigned char m_ipAddr[4];
-	unsigned char m_macAddr[6];
 	unsigned char BroadingCastAddr[6];
 	int arp_cache_count;
 
 public:
+	unsigned char m_macAddr[6];
 	BOOL			Receive(unsigned char* ppayload);
 	BOOL			Send(unsigned char* DstIpAddress, int nlength);
 	void			Set_Sender_Address(unsigned char* MACAddr, unsigned char* IpAddress);

@@ -293,6 +293,11 @@ void Cipc2023Dlg::OnBnClickedButtonSend()
 
 void Cipc2023Dlg::SendData()
 {
+	unsigned char* SrcAddr = MacAddr2HexInt(m_unSrcAddr);
+	if (SrcAddr == nullptr) {
+		return;
+	}
+	m_EthernetLayer->SetSourceAddress(SrcAddr);
 	CString unDstIpAddrStr; // 메세지 헤더를 저장할 문자열 변수 선언
 	unsigned char Ip1, Ip2, Ip3, Ip4;
 	m_DstIp.GetAddress(Ip1, Ip2, Ip3, Ip4);
@@ -350,7 +355,6 @@ BOOL Cipc2023Dlg::Receive(CString IpAddr, CString MacAddr, BOOL is_In)
 				}
 				SetTimer(k, 30000, NULL);
 			}
-			return FALSE;
 		}
 		return FALSE;
 	}
