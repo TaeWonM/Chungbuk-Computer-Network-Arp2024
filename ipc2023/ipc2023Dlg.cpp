@@ -783,8 +783,7 @@ void Cipc2023Dlg::OnBnClickedGarpButtonSend()
 	m_EthernetLayer->SetSourceAddress(macAddr);  // 복사된 MAC 주소 전달
 	// GARP 전송
 	if (m_Arp != nullptr) {
-		m_Arp->SendGARP(macAddr);
-		AfxMessageBox(_T("GARP request sent successfully."));
+		if (m_Arp->SendGARP(macAddr)) AfxMessageBox(_T("GARP request sent successfully."));
 	}
 	else {
 		AfxMessageBox(_T("ArpLayer not initialized."));

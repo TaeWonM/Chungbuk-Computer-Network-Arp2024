@@ -32,7 +32,7 @@ public:
 	void			Set_Ip_Address(unsigned char* IpAddr);
 	ArpLayer(char* pName);
 	virtual ~ArpLayer();
-	void			SendGARP(const unsigned char* macAddr);
+	BOOL			SendGARP(const unsigned char* macAddr);
 
 	typedef struct _ARP_HEADER {
 		unsigned short	hard_type; // total length of the data

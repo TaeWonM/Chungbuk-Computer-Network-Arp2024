@@ -130,7 +130,7 @@ void ArpLayer::Set_Sender_Address(unsigned char* MACAddr, unsigned char *IpAddre
 	Set_Mac_Address(MACAddr);
 }
 
-void ArpLayer::SendGARP(const unsigned char* macAddr) {
+BOOL ArpLayer::SendGARP(const unsigned char* macAddr) {
     // Broadcast 주소로 대상 MAC 주소 설정
     memset(m_sHeader.target_ethernet_address, 255, ETHER_ADDRESS_SIZE); // Broadcast MAC 주소 설정
 	
@@ -143,7 +143,7 @@ void ArpLayer::SendGARP(const unsigned char* macAddr) {
     memcpy(m_sHeader.sender_ethernet_address, macAddr, ETHER_ADDRESS_SIZE); // ARP 헤더의 송신 MAC 주소 설정
 
     // EthernetLayer를 통해 GARP 패킷 전송
-    mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE,1);
+    return mp_UnderLayer[0]->Send((unsigned char*)&m_sHeader, ARP_HEADER_SIZE,1);
 }
 
 
