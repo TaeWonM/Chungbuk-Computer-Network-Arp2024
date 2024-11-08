@@ -106,7 +106,7 @@ public:
 	CIPAddressCtrl m_SrcIp;
 	CIPAddressCtrl m_DstIp;
 	Cipc2023SubDlg * ProxyDlg;
-	int timerIndex[10];
+	int timerIndex[101];
 	int timerMaxIndex = 0;
 	afx_msg void OnCbnSelchangeCombo1();
 	//////////////////////////////////////

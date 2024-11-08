@@ -122,6 +122,7 @@ BOOL ArpLayer::Receive(unsigned char* ppayload) {
 		mp_UnderLayer[0]->SetMacDstAddress(m_replyHeader.target_ethernet_address);
 		mp_UnderLayer[0]->Send((unsigned char*)&m_replyHeader, ARP_HEADER_SIZE, 1);
 	}
+	free(payload);
 	return FALSE;
 }
 

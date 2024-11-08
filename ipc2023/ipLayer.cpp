@@ -110,3 +110,7 @@ void ipLayer::DeleteProxyItem(CString IpAddr) {
 void ipLayer::DeleteItem(CString IpAddr) {
 	m_IpMap.erase(IpAddr);
 }
+
+void ipLayer::DeleteAllItem() {
+	m_IpMap.clear();
+}

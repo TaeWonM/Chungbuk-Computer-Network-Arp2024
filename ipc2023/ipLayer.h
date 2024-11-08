@@ -31,6 +31,7 @@ public:
 	void			AddProxyItem(CString IpAddr, CString MacAddr);
 	void			DeleteProxyItem(CString IpAddr);
 	void			DeleteItem(CString IpAddr);
+	void			DeleteAllItem();
 	ipLayer(char* pName);
 	virtual ~ipLayer();
 };

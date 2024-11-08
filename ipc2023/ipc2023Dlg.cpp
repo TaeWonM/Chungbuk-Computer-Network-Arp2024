@@ -706,6 +706,7 @@ void Cipc2023Dlg::OnBnClickedAllDeleteBtn()
 	for (int i = 0; i < timerMaxIndex; i++) {
 		timerIndex[i] = -1;
 	}
+	m_Ip->DeleteAllItem();
 }
 
 
