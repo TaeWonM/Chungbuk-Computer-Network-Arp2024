@@ -293,11 +293,6 @@ void Cipc2023Dlg::OnBnClickedButtonSend()
 
 void Cipc2023Dlg::SendData()
 {
-	unsigned char* SrcAddr = MacAddr2HexInt(m_unSrcAddr);
-	if (SrcAddr == nullptr) {
-		return;
-	}
-	m_EthernetLayer->SetSourceAddress(SrcAddr);
 	CString unDstIpAddrStr; // 메세지 헤더를 저장할 문자열 변수 선언
 	unsigned char Ip1, Ip2, Ip3, Ip4;
 	m_DstIp.GetAddress(Ip1, Ip2, Ip3, Ip4);
@@ -782,6 +777,7 @@ void Cipc2023Dlg::OnBnClickedGarpButtonSend()
 	}
 	// MAC 주소 복사 및 설정
 	m_EthernetLayer->SetSourceAddress(macAddr);  // 복사된 MAC 주소 전달
+	m_Arp->Set_Mac_Address(macAddr);
 	// GARP 전송
 	if (m_Arp != nullptr) {
 		if (m_Arp->SendGARP(macAddr)) AfxMessageBox(_T("GARP request sent successfully."));
